@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.tekcapzule</groupId>
-    <artifactId>lm.user-service</artifactId>
+    <artifactId>lms-user-service</artifactId>
     <version>1.4.3</version>
     <name>LMS User Service</name>
     <description>LMS User Service</description>
