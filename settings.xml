@@ -18,8 +18,8 @@
                     </snapshots>
                 </repository>
                 <repository>
-                    <id>user</id>
-                    <url>https://maven.pkg.github.com/tekcapzule/user-service</url>
+                    <id>lmsUser</id>
+                    <url>https://maven.pkg.github.com/tekcapzule/lmsUser-service</url>
                 </repository>
                 <repository>
                     <id>central</id>
@@ -31,7 +31,7 @@
 
     <servers>
         <server>
-            <id>user</id>
+            <id>lmsUser</id>
             <username>${env.SERVER_USERNAME}</username>
             <password>${env.SERVER_PASSWORD}</password>
         </server>

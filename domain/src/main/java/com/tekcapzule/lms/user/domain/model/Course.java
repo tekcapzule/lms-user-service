@@ -15,5 +15,6 @@ import lombok.NoArgsConstructor;
 @DynamoDBDocument
 public class Course {
     private String courseId;
-    private String courseName;
+    private String title;
+    private String topicCode;
 }

@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
-public class DisableInput {
+public class UnsubscribeTopicInput {
     private String userId;
     private String tenantId;
+    private List<String> topicCodes;
 }

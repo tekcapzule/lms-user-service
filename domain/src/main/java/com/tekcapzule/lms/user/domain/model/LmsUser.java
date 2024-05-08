@@ -10,17 +10,20 @@ import com.tekcapzule.core.domain.BaseDomainEntity;
 import lombok.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @EqualsAndHashCode(callSuper = true)
-@DynamoDBTable(tableName = "User")
+@DynamoDBTable(tableName = "LmsUser")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User extends BaseDomainEntity implements AggregateRoot {
+public class LmsUser extends BaseDomainEntity implements AggregateRoot {
 
-    @DynamoDBHashKey(attributeName="userId")
+    @DynamoDBHashKey(attributeName="id")
+    private String id;
+    @DynamoDBAttribute(attributeName="userId")
     private String userId;
     @DynamoDBAttribute(attributeName = "tenantId")
     private String tenantId;
@@ -31,7 +34,7 @@ public class User extends BaseDomainEntity implements AggregateRoot {
     @DynamoDBAttribute(attributeName = "lastName")
     private String lastName;
     @DynamoDBAttribute(attributeName = "courses")
-    private List<Course> courses;
+    private Map<String, List<Course>> courses;
     @DynamoDBAttribute(attributeName = "subscribedTopics")
     private List<String> subscribedTopics;
     @DynamoDBAttribute(attributeName = "phoneNumber")
@@ -41,5 +44,12 @@ public class User extends BaseDomainEntity implements AggregateRoot {
     @DynamoDBAttribute(attributeName = "status")
     @DynamoDBTypeConvertedEnum
     private Status status;
-
+    @DynamoDBAttribute(attributeName = "points")
+    private int points;
+    @DynamoDBAttribute(attributeName = "badges")
+    private String badges;
+    @DynamoDBAttribute(attributeName = "address")
+    private Address address;
+    @DynamoDBAttribute(attributeName = "userActivity")
+    private List<Task> userActivity;
 }

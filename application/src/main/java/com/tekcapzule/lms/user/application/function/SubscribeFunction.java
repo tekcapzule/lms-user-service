@@ -6,9 +6,9 @@ import com.tekcapzule.core.utils.Outcome;
 import com.tekcapzule.core.utils.PayloadUtil;
 import com.tekcapzule.core.utils.Stage;
 import com.tekcapzule.lms.user.application.config.AppConfig;
-import com.tekcapzule.lms.user.application.function.input.FollowTopicInput;
+import com.tekcapzule.lms.user.application.function.input.SubscribeTopicInput;
 import com.tekcapzule.lms.user.application.mapper.InputOutputMapper;
-import com.tekcapzule.lms.user.domain.command.FollowTopicCommand;
+import com.tekcapzule.lms.user.domain.command.SubscribeTopicCommand;
 import com.tekcapzule.lms.user.domain.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -22,28 +22,28 @@ import java.util.function.Function;
 
 @Component
 @Slf4j
-public class FollowFunction implements Function<Message<FollowTopicInput>, Message<Void>> {
+public class SubscribeFunction implements Function<Message<SubscribeTopicInput>, Message<Void>> {
 
     private final UserService userService;
 
     private final AppConfig appConfig;
 
-    public FollowFunction(final UserService userService, final AppConfig appConfig) {
+    public SubscribeFunction(final UserService userService, final AppConfig appConfig) {
         this.userService = userService;
         this.appConfig = appConfig;
     }
 
     @Override
-    public Message<Void> apply(Message<FollowTopicInput> followTopicInputMessage) {
+    public Message<Void> apply(Message<SubscribeTopicInput> followTopicInputMessage) {
         Map<String, Object> responseHeaders = new HashMap<>();
         Map<String, Object> payload = new HashMap<>();
         String stage = appConfig.getStage().toUpperCase();
         try {
-            FollowTopicInput followTopicInput = followTopicInputMessage.getPayload();
-            log.info(String.format("Entering follow topic Function - User Id:%s, Topic Id:%s", followTopicInput.getUserId(), followTopicInput.getTopicCodes()));
+            SubscribeTopicInput subscribeTopicInput = followTopicInputMessage.getPayload();
+            log.info(String.format("Entering follow topic Function - User Id:%s, Topic Id:%s", subscribeTopicInput.getUserId(), subscribeTopicInput.getTopicCodes()));
             Origin origin = HeaderUtil.buildOriginFromHeaders(followTopicInputMessage.getHeaders());
-            FollowTopicCommand followTopicCommand = InputOutputMapper.buildFollowTopicCommandFromFollowTopicInput.apply(followTopicInput, origin);
-            userService.followTopic(followTopicCommand);
+            SubscribeTopicCommand subscribeTopicCommand = InputOutputMapper.buildFollowTopicCommandFromFollowTopicInput.apply(subscribeTopicInput, origin);
+            userService.subscribeTopic(subscribeTopicCommand);
             responseHeaders = HeaderUtil.populateResponseHeaders(responseHeaders, Stage.valueOf(stage), Outcome.SUCCESS);
             payload = PayloadUtil.composePayload(Outcome.SUCCESS);
         } catch (Exception ex) {

@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
-public class DeregisterCourseInput {
+public class OptInCourseInput {
     private String userId;
-    private Course course;
+    private String tenantId;
+    private Course bookmark;
 }

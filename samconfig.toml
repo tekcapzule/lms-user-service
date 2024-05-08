@@ -2,9 +2,9 @@ version = 0.1
 [dev]
 [dev.deploy]
 [dev.deploy.parameters]
-stack_name = "dev-lms-user-service"
+stack_name = "dev-lms-lmsUser-service"
 s3_bucket = "com.tekcapzule.api.deployment.dev"
-s3_prefix = "dev-lms-user-service"
+s3_prefix = "dev-lms-lmsUser-service"
 region = "us-east-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
@@ -14,9 +14,9 @@ image_repositories = []
 [prod]
 [prod.deploy]
 [prod.deploy.parameters]
-stack_name = "prod-lms-user-service"
+stack_name = "prod-lms-lmsUser-service"
 s3_bucket = "com.tekcapzule.api.deployment.prod"
-s3_prefix = "prod-lms-user-service"
+s3_prefix = "prod-lms-lmsUser-service"
 region = "us-east-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"

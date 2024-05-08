@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.tekcapzule</groupId>
-    <artifactId>lms-user-application</artifactId>
+    <artifactId>lms-lmsUser-application</artifactId>
     <version>1.4.3</version>
     <packaging>pom</packaging>
     <name>LMS User Application</name>
@@ -29,9 +29,9 @@
     </build>
     <distributionManagement>
         <repository>
-            <id>user</id>
+            <id>lmsUser</id>
             <name>GitHub TekCapzule Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/tekcapzule/user-service</url>
+            <url>https://maven.pkg.github.com/tekcapzule/lmsUser-service</url>
         </repository>
     </distributionManagement>
 </project>

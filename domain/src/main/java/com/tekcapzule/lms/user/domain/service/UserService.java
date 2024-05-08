@@ -1,7 +1,10 @@
 package com.tekcapzule.lms.user.domain.service;
 
 import com.tekcapzule.lms.user.domain.command.*;
-import com.tekcapzule.lms.user.domain.model.User;
+import com.tekcapzule.lms.user.domain.model.Course;
+import com.tekcapzule.lms.user.domain.model.LmsUser;
+
+import java.util.List;
 
 
 public interface UserService {
@@ -12,15 +15,16 @@ public interface UserService {
 
     void disable(DisableCommand disableCommand);
 
-    void registerCourse(RegisterCourseCommand registerCourseCommand);
+    void optInCourse(OptInCourseCommand optInCourseCommand);
 
-    void dereisterCourse(DeRegisterCourseCommand deRegisterCourseCommand);
+    void optOutCourse(OptOutCourseCommand optOutCourseCommand);
 
-    void followTopic(FollowTopicCommand followTopicCommand);
+    void subscribeTopic(SubscribeTopicCommand subscribeTopicCommand);
 
-    void unfollowTopic(UnfollowTopicCommand unfollowTopicCommand);
+    void unsubscribeTopic(UnSubscribeTopicCommand unSubscribeTopicCommand);
 
-    User get(String userId);
+    LmsUser get(String userId, String tenantId);
+    List<Course> getCourseByStatus(String userId, String tenantId, String status);
 
     int getAllUsersCount();
 }

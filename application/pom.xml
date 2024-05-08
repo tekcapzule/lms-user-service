@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.tekcapzule</groupId>
-    <artifactId>lms-user-service</artifactId>
+    <artifactId>lms-lmsUser-service</artifactId>
     <version>1.4.3</version>
     <name>LMS User Service</name>
     <description>LMS User Service</description>
@@ -58,7 +58,7 @@
         </dependency>
         <dependency>
             <groupId>com.tekcapzule</groupId>
-            <artifactId>lms-user-domain</artifactId>
+            <artifactId>lms-lmsUser-domain</artifactId>
             <version>1.4.3</version>
         </dependency>
         <dependency>
@@ -69,7 +69,7 @@
         </dependency>
         <dependency>
             <groupId>com.tekcapzule</groupId>
-            <artifactId>lms-user-domain</artifactId>
+            <artifactId>lms-lmsUser-domain</artifactId>
             <version>1.4.3</version>
             <scope>compile</scope>
         </dependency>
@@ -126,9 +126,9 @@
     </build>
     <distributionManagement>
         <repository>
-            <id>user</id>
+            <id>lmsUser</id>
             <name>GitHub TekCapzule Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/tekcapzule/user-service</url>
+            <url>https://maven.pkg.github.com/tekcapzule/lmsUser-service</url>
         </repository>
     </distributionManagement>
 </project>

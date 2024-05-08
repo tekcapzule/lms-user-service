@@ -1,15 +1,14 @@
 package com.tekcapzule.lms.user.application.function.input;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-@NoArgsConstructor
-public class FollowTopicInput {
+@Builder
+public class GetCourseByStatusInput {
     private String userId;
-    private List<String> topicCodes;
+    private String tenantId;
+    private String status;
 }

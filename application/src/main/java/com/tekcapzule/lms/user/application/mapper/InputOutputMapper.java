@@ -47,30 +47,30 @@ public final class InputOutputMapper {
         return disableCommand;
     };
 
-    public static final BiFunction<FollowTopicInput, Origin, FollowTopicCommand> buildFollowTopicCommandFromFollowTopicInput = (followTopicInput, origin) -> {
-        FollowTopicCommand followTopicCommand =  FollowTopicCommand.builder().build();
-        BeanUtils.copyProperties(followTopicInput, followTopicCommand);
-        addOrigin.apply(followTopicCommand, origin);
-        return followTopicCommand;
+    public static final BiFunction<SubscribeTopicInput, Origin, SubscribeTopicCommand> buildFollowTopicCommandFromFollowTopicInput = (subscribeTopicInput, origin) -> {
+        SubscribeTopicCommand subscribeTopicCommand =  SubscribeTopicCommand.builder().build();
+        BeanUtils.copyProperties(subscribeTopicInput, subscribeTopicCommand);
+        addOrigin.apply(subscribeTopicCommand, origin);
+        return subscribeTopicCommand;
     };
 
-    public static final BiFunction<UnfollowTopicInput, Origin, UnfollowTopicCommand> buildUnfollowTopicCommandFromUnfollowTopicInput = (unfollowTopicInput, origin) -> {
-        UnfollowTopicCommand unfollowTopicCommand =  UnfollowTopicCommand.builder().build();
-        BeanUtils.copyProperties(unfollowTopicInput, unfollowTopicCommand);
-        addOrigin.apply(unfollowTopicCommand, origin);
-        return unfollowTopicCommand;
+    public static final BiFunction<UnsubscribeTopicInput, Origin, UnSubscribeTopicCommand> buildUnfollowTopicCommandFromUnfollowTopicInput = (unsubscribeTopicInput, origin) -> {
+        UnSubscribeTopicCommand unSubscribeTopicCommand =  UnSubscribeTopicCommand.builder().build();
+        BeanUtils.copyProperties(unsubscribeTopicInput, unSubscribeTopicCommand);
+        addOrigin.apply(unSubscribeTopicCommand, origin);
+        return unSubscribeTopicCommand;
     };
 
-    public static final BiFunction<RegisterCourseInput, Origin, RegisterCourseCommand> buildRegisterCourseFromRegisterCourseInput = (registerCourseInput, origin) -> {
-        RegisterCourseCommand registerCourseCommand =  RegisterCourseCommand.builder().build();
-        BeanUtils.copyProperties(registerCourseInput, registerCourseCommand);
-        addOrigin.apply(registerCourseCommand, origin);
-        return registerCourseCommand;
+    public static final BiFunction<OptInCourseInput, Origin, OptInCourseCommand> buildRegisterCourseFromRegisterCourseInput = (optInCourseInput, origin) -> {
+        OptInCourseCommand optInCourseCommand =  OptInCourseCommand.builder().build();
+        BeanUtils.copyProperties(optInCourseInput, optInCourseCommand);
+        addOrigin.apply(optInCourseCommand, origin);
+        return optInCourseCommand;
     };
 
-    public static final BiFunction<DeregisterCourseInput, Origin, DeRegisterCourseCommand> buildDeregisterCourseCommandFromDeregisterCourseInput = (deregisterCourseInput, origin) -> {
-        DeRegisterCourseCommand removeBookmarkCommand =  DeRegisterCourseCommand.builder().build();
-        BeanUtils.copyProperties(deregisterCourseInput, removeBookmarkCommand);
+    public static final BiFunction<OptOutCourseInput, Origin, OptOutCourseCommand> buildDeregisterCourseCommandFromDeregisterCourseInput = (optOutCourseInput, origin) -> {
+        OptOutCourseCommand removeBookmarkCommand =  OptOutCourseCommand.builder().build();
+        BeanUtils.copyProperties(optOutCourseInput, removeBookmarkCommand);
         addOrigin.apply(removeBookmarkCommand, origin);
         return removeBookmarkCommand;
     };

@@ -26,6 +26,6 @@ public class Task {
     private Date taskEndDate;
     private Double completionPercentage;
     /*@DynamoDBAttribute(attributeName = "progressInformation")
-    private ProgressInformation progressInformation;*/
-    private Status status;
+    private ProgressInformation progressInformation;
+    */
 }

@@ -1,9 +1,10 @@
 package com.tekcapzule.lms.user.domain.service;
 
 import com.tekcapzule.lms.user.domain.command.*;
+import com.tekcapzule.lms.user.domain.model.Address;
 import com.tekcapzule.lms.user.domain.model.Course;
+import com.tekcapzule.lms.user.domain.model.LmsUser;
 import com.tekcapzule.lms.user.domain.model.Status;
-import com.tekcapzule.lms.user.domain.model.User;
 import com.tekcapzule.lms.user.domain.repository.UserDynamoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
@@ -18,6 +19,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
+    private static final String HASH = "#";
     private UserDynamoRepository userDynamoRepository;
 
     @Autowired
@@ -32,7 +34,7 @@ public class UserServiceImpl implements UserService {
         log.info(String.format("Entering create user service - User Id:%s", createCommand.getEmailId()));
 
 
-        User user = User.builder()
+        LmsUser lmsUser = LmsUser.builder()
                 .userId(createCommand.getEmailId())
                 .emailId(createCommand.getEmailId())
                 .firstName(createCommand.getFirstName())
@@ -42,11 +44,11 @@ public class UserServiceImpl implements UserService {
                 .status(Status.ACTIVE)
                 .build();
 
-        user.setAddedOn(createCommand.getExecOn());
-        user.setUpdatedOn(createCommand.getExecOn());
-        user.setAddedBy(createCommand.getExecBy().getUserId());
+        lmsUser.setAddedOn(createCommand.getExecOn());
+        lmsUser.setUpdatedOn(createCommand.getExecOn());
+        lmsUser.setAddedBy(createCommand.getExecBy().getUserId());
 
-        userDynamoRepository.save(user);
+        userDynamoRepository.save(lmsUser);
     }
 
     @Override
@@ -54,17 +56,27 @@ public class UserServiceImpl implements UserService {
 
         log.info(String.format("Entering update user service - User Id:%s", updateCommand.getUserId()));
 
-        User user = userDynamoRepository.findBy(updateCommand.getUserId());
-        if (user != null) {
-            user.setEmailId(updateCommand.getEmailId());
-            user.setFirstName(updateCommand.getFirstName());
-            user.setLastName(updateCommand.getLastName());
-            user.setPhoneNumber(updateCommand.getPhoneNumber());
-            user.setSubscribedTopics(updateCommand.getSubscribedTopics());
-            user.setCourses(updateCommand.getCourses());
-            user.setUpdatedOn(updateCommand.getExecOn());
-            user.setUpdatedBy(updateCommand.getExecBy().getUserId());
-            userDynamoRepository.save(user);
+        LmsUser lmsUser = userDynamoRepository.findBy(updateCommand.getUserId());
+        if (lmsUser != null) {
+            lmsUser.setEmailId(updateCommand.getEmailId());
+            lmsUser.setFirstName(updateCommand.getFirstName());
+            lmsUser.setLastName(updateCommand.getLastName());
+            lmsUser.setPhoneNumber(updateCommand.getPhoneNumber());
+            lmsUser.setAddress(Address.builder()
+                    .addressLine1(updateCommand.getAddress().getAddressLine1())
+                    .addressLine2(updateCommand.getAddress().getAddressLine2())
+                    .city(updateCommand.getAddress().getCity())
+                    .state(updateCommand.getAddress().getState())
+                    .country(updateCommand.getAddress().getCountry())
+                    .zipCode(updateCommand.getAddress().getZipCode())
+                    .build()
+            );
+            lmsUser.setSubscribedTopics(updateCommand.getSubscribedTopics());
+            //lmsUser.setCourses(updateCommand.getCourses());
+
+            lmsUser.setUpdatedOn(updateCommand.getExecOn());
+            lmsUser.setUpdatedBy(updateCommand.getExecBy().getUserId());
+            userDynamoRepository.save(lmsUser);
         }
     }
 
@@ -73,107 +85,112 @@ public class UserServiceImpl implements UserService {
 
         log.info(String.format("Entering disable user service - User Id:%s", disableCommand.getUserId()));
 
-        User user = userDynamoRepository.findBy(disableCommand.getUserId());
-        if (user != null) {
+        LmsUser lmsUser = userDynamoRepository.findBy(disableCommand.getUserId());
+        if (lmsUser != null) {
 
-            user.setStatus(Status.INACTIVE);
+            lmsUser.setStatus(Status.INACTIVE);
 
-            user.setUpdatedOn(disableCommand.getExecOn());
-            user.setUpdatedBy(disableCommand.getExecBy().getUserId());
+            lmsUser.setUpdatedOn(disableCommand.getExecOn());
+            lmsUser.setUpdatedBy(disableCommand.getExecBy().getUserId());
 
-            userDynamoRepository.save(user);
+            userDynamoRepository.save(lmsUser);
         }
     }
 
     @Override
-    public void registerCourse(RegisterCourseCommand registerCourseCommand) {
+    public void optInCourse(OptInCourseCommand optInCourseCommand) {
 
-        log.info(String.format("Entering register course service - User Id:%s, course Id:%s, course name:%s", registerCourseCommand.getUserId(),
-                registerCourseCommand.getCourse().getCourseId(), registerCourseCommand.getCourse().getCourseName()));
+        log.info(String.format("Entering register course service - User Id:%s, course Id:%s, course name:%s", optInCourseCommand.getUserId(),
+                optInCourseCommand.getCourse().getCourseId(), optInCourseCommand.getCourse().getTitle()));
 
-        User user = userDynamoRepository.findBy(registerCourseCommand.getUserId());
-        if (user != null) {
+        LmsUser lmsUser = userDynamoRepository.findBy(optInCourseCommand.getUserId());
+        if (lmsUser != null) {
             List<Course> courses = new ArrayList<>();
-            if ( user.getCourses() != null) {
-                courses.addAll(user.getCourses());
+            if ( lmsUser.getCourses() != null) {
+                //courses.addAll(lmsUser.getCourses());
             }
-            courses.add(registerCourseCommand.getCourse());
-            user.setCourses(courses);
+            courses.add(optInCourseCommand.getCourse());
+            //lmsUser.setCourses(courses);
 
-            user.setUpdatedOn(registerCourseCommand.getExecOn());
-            user.setUpdatedBy(registerCourseCommand.getExecBy().getUserId());
+            lmsUser.setUpdatedOn(optInCourseCommand.getExecOn());
+            lmsUser.setUpdatedBy(optInCourseCommand.getExecBy().getUserId());
 
-            userDynamoRepository.save(user);
+            userDynamoRepository.save(lmsUser);
         }
     }
 
     @Override
-    public void dereisterCourse(DeRegisterCourseCommand deRegisterCourseCommand) {
+    public void optOutCourse(OptOutCourseCommand optOutCourseCommand) {
 
-        log.info(String.format("Entering remove bookmark service - User Id:%s, course Id:%s", deRegisterCourseCommand.getUserId(),
-                deRegisterCourseCommand.getCourse().getCourseId()));
+        log.info(String.format("Entering remove bookmark service - User Id:%s, course Id:%s", optOutCourseCommand.getUserId(),
+                optOutCourseCommand.getCourse().getCourseId()));
 
-        User user = userDynamoRepository.findBy(deRegisterCourseCommand.getUserId());
-        if (user != null) {
-            List<Course> courses = user.getCourses();
+        LmsUser lmsUser = userDynamoRepository.findBy(optOutCourseCommand.getUserId());
+        if (lmsUser != null) {
+            /*List<Course> courses = lmsUser.getCourses();
             if ( courses != null) {
-                courses.removeIf(course -> course.getCourseId().equals(deRegisterCourseCommand.getCourse().getCourseId()));
-                user.setCourses(courses);
+                courses.removeIf(course -> course.getCourseId().equals(optOutCourseCommand.getCourse().getCourseId()));
+                lmsUser.setCourses(courses);
             }
+*/
+            lmsUser.setUpdatedOn(optOutCourseCommand.getExecOn());
+            lmsUser.setUpdatedBy(optOutCourseCommand.getExecBy().getUserId());
 
-            user.setUpdatedOn(deRegisterCourseCommand.getExecOn());
-            user.setUpdatedBy(deRegisterCourseCommand.getExecBy().getUserId());
-
-            userDynamoRepository.save(user);
+            userDynamoRepository.save(lmsUser);
         }
     }
 
     @Override
-    public void followTopic(FollowTopicCommand followTopicCommand) {
-        log.info(String.format("Entering follow topic service - User Id:%s, Topic Code:%s", followTopicCommand.getUserId(), followTopicCommand.getTopicCodes()));
+    public void subscribeTopic(SubscribeTopicCommand subscribeTopicCommand) {
+        log.info(String.format("Entering follow topic service - User Id:%s, Topic Code:%s", subscribeTopicCommand.getUserId(), subscribeTopicCommand.getTopicCodes()));
 
-        User user = userDynamoRepository.findBy(followTopicCommand.getUserId());
-        if (user != null) {
+        LmsUser lmsUser = userDynamoRepository.findBy(subscribeTopicCommand.getUserId());
+        if (lmsUser != null) {
 
             List<String> followedTopics = new ArrayList<>();
-            followedTopics.addAll(followTopicCommand.getTopicCodes());
-            user.setSubscribedTopics(followedTopics);
+            followedTopics.addAll(subscribeTopicCommand.getTopicCodes());
+            lmsUser.setSubscribedTopics(followedTopics);
 
-            user.setUpdatedOn(followTopicCommand.getExecOn());
-            user.setUpdatedBy(followTopicCommand.getExecBy().getUserId());
+            lmsUser.setUpdatedOn(subscribeTopicCommand.getExecOn());
+            lmsUser.setUpdatedBy(subscribeTopicCommand.getExecBy().getUserId());
 
-            userDynamoRepository.save(user);
+            userDynamoRepository.save(lmsUser);
         }
     }
 
     @Override
-    public void unfollowTopic(UnfollowTopicCommand unfollowTopicCommand) {
-        log.info(String.format("Entering unfollow topic service - User Id:%s, Topic Code:%s", unfollowTopicCommand.getUserId(), unfollowTopicCommand.getTopicCodes()));
+    public void unsubscribeTopic(UnSubscribeTopicCommand unSubscribeTopicCommand) {
+        log.info(String.format("Entering unfollow topic service - User Id:%s, Topic Code:%s", unSubscribeTopicCommand.getUserId(), unSubscribeTopicCommand.getTopicCodes()));
 
-        User user = userDynamoRepository.findBy(unfollowTopicCommand.getUserId());
-        if (user != null) {
+        LmsUser lmsUser = userDynamoRepository.findBy(unSubscribeTopicCommand.getUserId());
+        if (lmsUser != null) {
 
             List<String> followedTopics = new ArrayList<>();
-            if (user.getSubscribedTopics() != null) {
-                followedTopics = user.getSubscribedTopics();
+            if (lmsUser.getSubscribedTopics() != null) {
+                followedTopics = lmsUser.getSubscribedTopics();
             }
 
-            followedTopics.removeAll(unfollowTopicCommand.getTopicCodes());
-            user.setSubscribedTopics(followedTopics);
+            followedTopics.removeAll(unSubscribeTopicCommand.getTopicCodes());
+            lmsUser.setSubscribedTopics(followedTopics);
 
-            user.setUpdatedOn(unfollowTopicCommand.getExecOn());
-            user.setUpdatedBy(unfollowTopicCommand.getExecBy().getUserId());
+            lmsUser.setUpdatedOn(unSubscribeTopicCommand.getExecOn());
+            lmsUser.setUpdatedBy(unSubscribeTopicCommand.getExecBy().getUserId());
 
-            userDynamoRepository.save(user);
+            userDynamoRepository.save(lmsUser);
         }
     }
 
     @Override
-    public User get(String userId) {
+    public LmsUser get(String userId, String tenantId) {
 
         log.info(String.format("Entering get user service - User Id:%s", userId));
 
-        return userDynamoRepository.findBy(userId);
+        return userDynamoRepository.findBy(tenantId+ HASH +userId);
+    }
+
+    @Override
+    public List<Course> getCourseByStatus(String userId, String tenantId, String status) {
+        return null;
     }
 
     @Override

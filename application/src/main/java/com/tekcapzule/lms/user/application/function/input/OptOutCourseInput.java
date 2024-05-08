@@ -1,16 +1,15 @@
-package com.tekcapzule.lms.user.domain.command;
+package com.tekcapzule.lms.user.application.function.input;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.tekcapzule.core.domain.Command;
 import com.tekcapzule.lms.user.domain.model.Course;
-import lombok.Builder;
 import lombok.Data;
-
+import lombok.NoArgsConstructor;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Builder
-public class DeRegisterCourseCommand extends Command {
+@NoArgsConstructor
+public class OptOutCourseInput {
     private String userId;
+    private String tenantId;
     private Course course;
 }
