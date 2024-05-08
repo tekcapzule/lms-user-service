@@ -50,19 +50,36 @@ Resources:
 
   # Setup DynamoDB Table
 
-  UserTable:
+  LmsUserTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Sub "${Stage}LmsUser"
       AttributeDefinitions:
         - AttributeName: userId
           AttributeType: S
+        - AttributeName: tenantId
+          AttributeType: S
       KeySchema:
         - AttributeName: userId
           KeyType: HASH
+        - AttributeName: tenantId
+          AttributeType: HASH
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
+      ServiceToken: dummytoken
+      GlobalSecondaryIndexes:
+        - IndexName: courseGSI
+          KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+            - AttributeName: status
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
 
   # Setup Lambda Functions
 
