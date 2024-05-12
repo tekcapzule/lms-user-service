@@ -58,7 +58,7 @@
         </dependency>
         <dependency>
             <groupId>com.tekcapzule</groupId>
-            <artifactId>lms-lmsUser-domain</artifactId>
+            <artifactId>lms-user-domain</artifactId>
             <version>1.4.3</version>
         </dependency>
         <dependency>
@@ -69,7 +69,13 @@
         </dependency>
         <dependency>
             <groupId>com.tekcapzule</groupId>
-            <artifactId>lms-lmsUser-domain</artifactId>
+            <artifactId>lms-user-domain</artifactId>
+            <version>1.4.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.tekcapzule</groupId>
+            <artifactId>lms-User-domain</artifactId>
             <version>1.4.3</version>
             <scope>compile</scope>
         </dependency>

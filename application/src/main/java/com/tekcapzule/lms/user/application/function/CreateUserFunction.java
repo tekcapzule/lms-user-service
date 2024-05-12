@@ -26,13 +26,13 @@ import java.util.function.Function;
 
 @Component
 @Slf4j
-public class CreateFunction  implements Function<CognitoUserPoolPostConfirmationEvent,CognitoUserPoolPostConfirmationEvent> {
+public class CreateUserFunction implements Function<CognitoUserPoolPostConfirmationEvent,CognitoUserPoolPostConfirmationEvent> {
 
     private final UserService userService;
 
     private final AppConfig appConfig;
 
-    public CreateFunction(final UserService userService, final AppConfig appConfig) {
+    public CreateUserFunction(final UserService userService, final AppConfig appConfig) {
         this.userService = userService;
         this.appConfig = appConfig;
     }

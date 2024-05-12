@@ -1,10 +1,7 @@
 package com.tekcapzule.lms.user.domain.service;
 
 import com.tekcapzule.lms.user.domain.command.*;
-import com.tekcapzule.lms.user.domain.model.Address;
-import com.tekcapzule.lms.user.domain.model.Course;
-import com.tekcapzule.lms.user.domain.model.LmsUser;
-import com.tekcapzule.lms.user.domain.model.Status;
+import com.tekcapzule.lms.user.domain.model.*;
 import com.tekcapzule.lms.user.domain.repository.UserDynamoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
@@ -12,8 +9,7 @@ import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 @Slf4j
@@ -41,6 +37,13 @@ public class UserServiceImpl implements UserService {
                 .lastName(createCommand.getLastName())
                 .phoneNumber(createCommand.getPhoneNumber())
                 .activeSince(DateTime.now(DateTimeZone.UTC).toString())
+                .address(Address.builder()
+                        .addressLine1(createCommand.getAddress().getAddressLine1())
+                        .addressLine2(createCommand.getAddress().getAddressLine1())
+                        .city(createCommand.getAddress().getCity())
+                        .state(createCommand.getAddress().getState())
+                        .country(createCommand.getAddress().getCountry())
+                        .zipCode(createCommand.getAddress().getZipCode()).build())
                 .status(Status.ACTIVE)
                 .build();
 
@@ -72,7 +75,7 @@ public class UserServiceImpl implements UserService {
                     .build()
             );
             lmsUser.setSubscribedTopics(updateCommand.getSubscribedTopics());
-            //lmsUser.setCourses(updateCommand.getCourses());
+            lmsUser.setCourses(updateCommand.getCourses());
 
             lmsUser.setUpdatedOn(updateCommand.getExecOn());
             lmsUser.setUpdatedBy(updateCommand.getExecBy().getUserId());
@@ -100,17 +103,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public void optInCourse(OptInCourseCommand optInCourseCommand) {
 
-        log.info(String.format("Entering register course service - User Id:%s, course Id:%s, course name:%s", optInCourseCommand.getUserId(),
+        log.info(String.format("Entering OptIn course service - User Id:%s, course Id:%s, course name:%s", optInCourseCommand.getUserId(),
                 optInCourseCommand.getCourse().getCourseId(), optInCourseCommand.getCourse().getTitle()));
 
         LmsUser lmsUser = userDynamoRepository.findBy(optInCourseCommand.getUserId());
         if (lmsUser != null) {
-            List<Course> courses = new ArrayList<>();
+            Map<CourseStatus, List<Course>> courses = new HashMap<>();
             if ( lmsUser.getCourses() != null) {
-                //courses.addAll(lmsUser.getCourses());
+                courses.putAll(lmsUser.getCourses());
             }
-            courses.add(optInCourseCommand.getCourse());
-            //lmsUser.setCourses(courses);
+            courses.computeIfAbsent(CourseStatus.OPTEDIN, k -> new ArrayList<>()).add(optInCourseCommand.getCourse());
+            lmsUser.setCourses(courses);
 
             lmsUser.setUpdatedOn(optInCourseCommand.getExecOn());
             lmsUser.setUpdatedBy(optInCourseCommand.getExecBy().getUserId());
@@ -122,17 +125,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public void optOutCourse(OptOutCourseCommand optOutCourseCommand) {
 
-        log.info(String.format("Entering remove bookmark service - User Id:%s, course Id:%s", optOutCourseCommand.getUserId(),
+        log.info(String.format("Entering optOut course service - User Id:%s, course Id:%s", optOutCourseCommand.getUserId(),
                 optOutCourseCommand.getCourse().getCourseId()));
 
         LmsUser lmsUser = userDynamoRepository.findBy(optOutCourseCommand.getUserId());
         if (lmsUser != null) {
-            /*List<Course> courses = lmsUser.getCourses();
+            Map<CourseStatus, List<Course>> courses = lmsUser.getCourses();
             if ( courses != null) {
-                courses.removeIf(course -> course.getCourseId().equals(optOutCourseCommand.getCourse().getCourseId()));
+                courses.entrySet().stream().map(e-> e.getValue().removeIf(course -> course.getCourseId().equals(optOutCourseCommand.getCourse().getCourseId())));
                 lmsUser.setCourses(courses);
             }
-*/
             lmsUser.setUpdatedOn(optOutCourseCommand.getExecOn());
             lmsUser.setUpdatedBy(optOutCourseCommand.getExecBy().getUserId());
 
@@ -190,6 +192,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Course> getCourseByStatus(String userId, String tenantId, String status) {
+        log.info(String.format("Entering get course by status service - User Id:%s Course Status:%s", userId, status));
+
+        LmsUser user = userDynamoRepository.findBy(tenantId+ HASH +userId);
+        if(user!=null){
+            return user.getCourses().get(CourseStatus.valueOf(status));
+        }
         return null;
     }
 

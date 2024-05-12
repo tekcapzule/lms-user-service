@@ -1,14 +1,20 @@
 package com.tekcapzule.lms.user.domain.repository;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.Select;
+import com.tekcapzule.lms.user.domain.model.Course;
 import com.tekcapzule.lms.user.domain.model.LmsUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Repository
@@ -42,5 +48,4 @@ public class UserRepositoryImpl implements UserDynamoRepository {
     public int getAllUsersCount() {
         return dynamo.count(LmsUser.class,new DynamoDBScanExpression().withSelect(Select.COUNT));
     }
-
 }

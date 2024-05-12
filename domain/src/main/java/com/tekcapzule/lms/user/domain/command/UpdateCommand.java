@@ -4,10 +4,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConvertedEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.tekcapzule.core.domain.Command;
-import com.tekcapzule.lms.user.domain.model.Address;
-import com.tekcapzule.lms.user.domain.model.Course;
-import com.tekcapzule.lms.user.domain.model.Status;
-import com.tekcapzule.lms.user.domain.model.Task;
+import com.tekcapzule.lms.user.domain.model.*;
 import lombok.Builder;
 import lombok.Data;
 
@@ -25,7 +22,7 @@ public class UpdateCommand extends Command {
     private String emailId;
     private String phoneNumber;
     private List<String> subscribedTopics;
-    private List<Course> courses;
+    private Map<CourseStatus, List<Course>> courses;
     private String activeSince;
     private Status status;
     private int points;

@@ -21,10 +21,9 @@ import java.util.Map;
 @NoArgsConstructor
 public class LmsUser extends BaseDomainEntity implements AggregateRoot {
 
-    @DynamoDBHashKey(attributeName="id")
-    private String id;
-    @DynamoDBAttribute(attributeName="userId")
+    @DynamoDBHashKey(attributeName="userId")
     private String userId;
+
     @DynamoDBAttribute(attributeName = "tenantId")
     private String tenantId;
     @DynamoDBAttribute(attributeName = "emailId")
@@ -34,7 +33,7 @@ public class LmsUser extends BaseDomainEntity implements AggregateRoot {
     @DynamoDBAttribute(attributeName = "lastName")
     private String lastName;
     @DynamoDBAttribute(attributeName = "courses")
-    private Map<String, List<Course>> courses;
+    private Map<CourseStatus, List<Course>> courses;
     @DynamoDBAttribute(attributeName = "subscribedTopics")
     private List<String> subscribedTopics;
     @DynamoDBAttribute(attributeName = "phoneNumber")

@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.tekcapzule</groupId>
-    <artifactId>lms-lmsUser-domain</artifactId>
+    <artifactId>lms-User-domain</artifactId>
     <version>1.4.3</version>
     <name>LMS User Domain</name>
     <description>LMS User Domain</description>

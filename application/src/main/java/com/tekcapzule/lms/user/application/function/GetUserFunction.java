@@ -18,13 +18,13 @@ import java.util.function.Function;
 
 @Component
 @Slf4j
-public class GetFunction implements Function<Message<GetInput>, Message<LmsUser>> {
+public class GetUserFunction implements Function<Message<GetInput>, Message<LmsUser>> {
 
     private final UserService userService;
 
     private final AppConfig appConfig;
 
-    public GetFunction(final UserService userService, final AppConfig appConfig) {
+    public GetUserFunction(final UserService userService, final AppConfig appConfig) {
         this.userService = userService;
         this.appConfig = appConfig;
     }

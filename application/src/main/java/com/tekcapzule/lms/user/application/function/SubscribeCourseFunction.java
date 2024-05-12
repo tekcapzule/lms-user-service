@@ -6,9 +6,9 @@ import com.tekcapzule.core.utils.Outcome;
 import com.tekcapzule.core.utils.PayloadUtil;
 import com.tekcapzule.core.utils.Stage;
 import com.tekcapzule.lms.user.application.config.AppConfig;
-import com.tekcapzule.lms.user.application.function.input.UnsubscribeTopicInput;
+import com.tekcapzule.lms.user.application.function.input.SubscribeTopicInput;
 import com.tekcapzule.lms.user.application.mapper.InputOutputMapper;
-import com.tekcapzule.lms.user.domain.command.UnSubscribeTopicCommand;
+import com.tekcapzule.lms.user.domain.command.SubscribeTopicCommand;
 import com.tekcapzule.lms.user.domain.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -19,29 +19,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+
 @Component
 @Slf4j
-public class UnSubscribeFunction implements Function<Message<UnsubscribeTopicInput>, Message<Void>> {
+public class SubscribeCourseFunction implements Function<Message<SubscribeTopicInput>, Message<Void>> {
+
     private final UserService userService;
 
     private final AppConfig appConfig;
 
-    public UnSubscribeFunction(final UserService userService, final AppConfig appConfig) {
+    public SubscribeCourseFunction(final UserService userService, final AppConfig appConfig) {
         this.userService = userService;
         this.appConfig = appConfig;
     }
 
     @Override
-    public Message<Void> apply(Message<UnsubscribeTopicInput> unfollowTopicInputMessage) {
+    public Message<Void> apply(Message<SubscribeTopicInput> followTopicInputMessage) {
         Map<String, Object> responseHeaders = new HashMap<>();
         Map<String, Object> payload = new HashMap<>();
         String stage = appConfig.getStage().toUpperCase();
         try {
-            UnsubscribeTopicInput unsubscribeTopicInput = unfollowTopicInputMessage.getPayload();
-            log.info(String.format("Entering unfollow topic Function - User Id:%s, Topic Id:%s", unsubscribeTopicInput.getUserId(), unsubscribeTopicInput.getTopicCodes()));
-            Origin origin = HeaderUtil.buildOriginFromHeaders(unfollowTopicInputMessage.getHeaders());
-            UnSubscribeTopicCommand unSubscribeTopicCommand = InputOutputMapper.buildUnfollowTopicCommandFromUnfollowTopicInput.apply(unsubscribeTopicInput, origin);
-            userService.unsubscribeTopic(unSubscribeTopicCommand);
+            SubscribeTopicInput subscribeTopicInput = followTopicInputMessage.getPayload();
+            log.info(String.format("Entering follow topic Function - User Id:%s, Topic Id:%s", subscribeTopicInput.getUserId(), subscribeTopicInput.getTopicCodes()));
+            Origin origin = HeaderUtil.buildOriginFromHeaders(followTopicInputMessage.getHeaders());
+            SubscribeTopicCommand subscribeTopicCommand = InputOutputMapper.buildFollowTopicCommandFromFollowTopicInput.apply(subscribeTopicInput, origin);
+            userService.subscribeTopic(subscribeTopicCommand);
             responseHeaders = HeaderUtil.populateResponseHeaders(responseHeaders, Stage.valueOf(stage), Outcome.SUCCESS);
             payload = PayloadUtil.composePayload(Outcome.SUCCESS);
         } catch (Exception ex) {

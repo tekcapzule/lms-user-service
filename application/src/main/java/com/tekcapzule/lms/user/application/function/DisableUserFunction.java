@@ -21,13 +21,13 @@ import java.util.function.Function;
 
 @Component
 @Slf4j
-public class DisableFunction implements Function<Message<DisableInput>, Message<Void>> {
+public class DisableUserFunction implements Function<Message<DisableInput>, Message<Void>> {
 
     private final UserService userService;
 
     private final AppConfig appConfig;
 
-    public DisableFunction(final UserService userService, final AppConfig appConfig) {
+    public DisableUserFunction(final UserService userService, final AppConfig appConfig) {
         this.userService = userService;
         this.appConfig = appConfig;
     }
