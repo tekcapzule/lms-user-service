@@ -4,11 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
-public enum Status {
-    ACTIVE("Active"),
-    INACTIVE("Inactive"),
-    EXPIRED("Expired"),
-    SUBMITTED("Submitted");
+public enum CourseType {
+    VIDEO("Video"),
+    AUDIO("Audio"),
+    PDF("Pdf");
 
     @Getter
     private String value;

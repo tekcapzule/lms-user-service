@@ -10,7 +10,6 @@ import com.tekcapzule.core.domain.BaseDomainEntity;
 import lombok.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -32,8 +31,8 @@ public class LmsUser extends BaseDomainEntity implements AggregateRoot {
     private String firstName;
     @DynamoDBAttribute(attributeName = "lastName")
     private String lastName;
-    @DynamoDBAttribute(attributeName = "courses")
-    private Map<CourseStatus, List<Course>> courses;
+    @DynamoDBAttribute(attributeName = "enrollments")
+    private List<Enrollment> enrollments;
     @DynamoDBAttribute(attributeName = "subscribedTopics")
     private List<String> subscribedTopics;
     @DynamoDBAttribute(attributeName = "phoneNumber")

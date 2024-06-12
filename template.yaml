@@ -37,7 +37,7 @@ Resources:
   LmsUserApi:
     Type: AWS::Serverless::Api
     Properties:
-      Name: !Sub "user-${Stage}"
+      Name: !Sub "lmsuser-${Stage}"
       StageName: !Ref Stage
       Cors:
         AllowMethods: "'POST, GET'"
@@ -288,7 +288,14 @@ Resources:
             Method: post
             RestApiId:
               Ref: LmsUserApi
-
+  ConfigLambdaPermission:
+    Type: "AWS::Lambda::Permission"
+    DependsOn:
+      - GetUserFunction
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GetUserFunction
+      Principal: apigateway.amazonaws.com
 
   # Set Output Variable
 

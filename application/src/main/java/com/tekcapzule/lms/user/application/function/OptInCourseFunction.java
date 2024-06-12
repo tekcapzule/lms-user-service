@@ -39,7 +39,7 @@ public class OptInCourseFunction implements Function<Message<OptInCourseInput>, 
         String stage = appConfig.getStage().toUpperCase();
         try {
             OptInCourseInput optInCourseInput = registerCourseInputMessage.getPayload();
-            log.info(String.format("Entering register course Function - User Id:%s, Course Id:%s", optInCourseInput.getUserId(), optInCourseInput.getBookmark().getCourseId()));
+            log.info(String.format("Entering register course Function - User Id:%s, Course Id:%s", optInCourseInput.getUserId(), optInCourseInput.getCourseId()));
             Origin origin = HeaderUtil.buildOriginFromHeaders(registerCourseInputMessage.getHeaders());
             OptInCourseCommand optInCourseCommand = InputOutputMapper.buildRegisterCourseFromRegisterCourseInput.apply(optInCourseInput, origin);
             userService.optInCourse(optInCourseCommand);

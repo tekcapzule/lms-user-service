@@ -2,7 +2,7 @@ package com.tekcapzule.lms.user.domain.command;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.tekcapzule.core.domain.Command;
-import com.tekcapzule.lms.user.domain.model.Course;
+import com.tekcapzule.lms.user.domain.model.Enrollment;
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,5 +13,5 @@ import lombok.Data;
 public class OptInCourseCommand extends Command {
     private String userId;
     private String tenantId;
-    private Course course;
+    private String courseId;
 }

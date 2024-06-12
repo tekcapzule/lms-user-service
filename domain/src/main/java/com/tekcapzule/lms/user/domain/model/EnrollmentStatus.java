@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
-public enum CourseStatus {
+public enum EnrollmentStatus {
     OPTEDIN("OptedIn"),
     INPROGRESS("In Progress"),
     COMPLETED("Completed");

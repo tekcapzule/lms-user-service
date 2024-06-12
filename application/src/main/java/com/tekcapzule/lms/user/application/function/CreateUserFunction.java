@@ -1,5 +1,6 @@
 package com.tekcapzule.lms.user.application.function;
 
+import com.amazonaws.services.lambda.runtime.events.CognitoUserPoolPostAuthenticationEvent;
 import com.amazonaws.services.lambda.runtime.events.CognitoUserPoolPostConfirmationEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +27,7 @@ import java.util.function.Function;
 
 @Component
 @Slf4j
-public class CreateUserFunction implements Function<CognitoUserPoolPostConfirmationEvent,CognitoUserPoolPostConfirmationEvent> {
+public class CreateUserFunction implements Function<CognitoUserPoolPostAuthenticationEvent,CognitoUserPoolPostAuthenticationEvent> {
 
     private final UserService userService;
 
@@ -54,7 +55,7 @@ public class CreateUserFunction implements Function<CognitoUserPoolPostConfirmat
     }
 
     @Override
-    public CognitoUserPoolPostConfirmationEvent apply(CognitoUserPoolPostConfirmationEvent cognitoUserPoolPostConfirmationEvent) {
+    public CognitoUserPoolPostAuthenticationEvent apply(CognitoUserPoolPostAuthenticationEvent cognitoUserPoolPostConfirmationEvent) {
         Map<String, Object> responseHeaders = new HashMap<>();
         Map<String, Object> payload = new HashMap<>();
         String stage = appConfig.getStage().toUpperCase();

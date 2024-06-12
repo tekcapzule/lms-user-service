@@ -4,11 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
-public enum Status {
-    ACTIVE("Active"),
-    INACTIVE("Inactive"),
-    EXPIRED("Expired"),
-    SUBMITTED("Submitted");
+public enum LearningMode {
+    SELF_PACED("Self Paced"),
+    INSTRUCTOR_LEAD("Instructor Lead"),
+    HYBRID("Hybrid");
 
     @Getter
     private String value;

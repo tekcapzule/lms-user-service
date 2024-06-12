@@ -1,5 +1,6 @@
 package com.tekcapzule.lms.user.domain.service;
 
+import com.tekcapzule.lms.user.domain.client.CourseServiceClient;
 import com.tekcapzule.lms.user.domain.command.*;
 import com.tekcapzule.lms.user.domain.model.*;
 import com.tekcapzule.lms.user.domain.repository.UserDynamoRepository;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -17,10 +19,12 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
     private static final String HASH = "#";
     private UserDynamoRepository userDynamoRepository;
+    private CourseServiceClient courseServiceClient;
 
     @Autowired
-    public UserServiceImpl(UserDynamoRepository userDynamoRepository) {
+    public UserServiceImpl(UserDynamoRepository userDynamoRepository, CourseServiceClient courseServiceClient) {
         this.userDynamoRepository = userDynamoRepository;
+        this.courseServiceClient = courseServiceClient;
     }
 
     @Override
@@ -75,8 +79,7 @@ public class UserServiceImpl implements UserService {
                     .build()
             );
             lmsUser.setSubscribedTopics(updateCommand.getSubscribedTopics());
-            lmsUser.setCourses(updateCommand.getCourses());
-
+            lmsUser.setEnrollments(updateCommand.getEnrollments());
             lmsUser.setUpdatedOn(updateCommand.getExecOn());
             lmsUser.setUpdatedBy(updateCommand.getExecBy().getUserId());
             userDynamoRepository.save(lmsUser);
@@ -103,17 +106,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public void optInCourse(OptInCourseCommand optInCourseCommand) {
 
-        log.info(String.format("Entering OptIn course service - User Id:%s, course Id:%s, course name:%s", optInCourseCommand.getUserId(),
-                optInCourseCommand.getCourse().getCourseId(), optInCourseCommand.getCourse().getTitle()));
+        log.info(String.format("Entering OptIn course service - User Id:%s, course Id:%s", optInCourseCommand.getUserId(),
+                optInCourseCommand.getCourseId()));
 
         LmsUser lmsUser = userDynamoRepository.findBy(optInCourseCommand.getUserId());
         if (lmsUser != null) {
-            Map<CourseStatus, List<Course>> courses = new HashMap<>();
-            if ( lmsUser.getCourses() != null) {
-                courses.putAll(lmsUser.getCourses());
+            List<Enrollment> enrollments = new ArrayList<>();
+            if ( lmsUser.getEnrollments() != null) {
+                enrollments.addAll(lmsUser.getEnrollments());
             }
-            courses.computeIfAbsent(CourseStatus.OPTEDIN, k -> new ArrayList<>()).add(optInCourseCommand.getCourse());
-            lmsUser.setCourses(courses);
+            //get Course By Id
+            LMSCourse course = courseServiceClient.getCourseByCourseId(optInCourseCommand.getCourseId());
+            if(course != null){
+                enrollments.add(Enrollment.builder()
+                    .courseId(course.getCourseId()).enrollmentStatus(EnrollmentStatus.OPTEDIN).modules(course.getModules()).build());
+            }
+            lmsUser.setEnrollments(enrollments);
 
             lmsUser.setUpdatedOn(optInCourseCommand.getExecOn());
             lmsUser.setUpdatedBy(optInCourseCommand.getExecBy().getUserId());
@@ -126,15 +134,12 @@ public class UserServiceImpl implements UserService {
     public void optOutCourse(OptOutCourseCommand optOutCourseCommand) {
 
         log.info(String.format("Entering optOut course service - User Id:%s, course Id:%s", optOutCourseCommand.getUserId(),
-                optOutCourseCommand.getCourse().getCourseId()));
+                optOutCourseCommand.getEnrollment().getCourseId()));
 
         LmsUser lmsUser = userDynamoRepository.findBy(optOutCourseCommand.getUserId());
         if (lmsUser != null) {
-            Map<CourseStatus, List<Course>> courses = lmsUser.getCourses();
-            if ( courses != null) {
-                courses.entrySet().stream().map(e-> e.getValue().removeIf(course -> course.getCourseId().equals(optOutCourseCommand.getCourse().getCourseId())));
-                lmsUser.setCourses(courses);
-            }
+            List<Enrollment> enrollments = lmsUser.getEnrollments();
+            enrollments.removeIf(course -> course.getCourseId().equals(optOutCourseCommand.getEnrollment().getCourseId()));
             lmsUser.setUpdatedOn(optOutCourseCommand.getExecOn());
             lmsUser.setUpdatedBy(optOutCourseCommand.getExecBy().getUserId());
 
@@ -187,16 +192,30 @@ public class UserServiceImpl implements UserService {
 
         log.info(String.format("Entering get user service - User Id:%s", userId));
 
-        return userDynamoRepository.findBy(tenantId+ HASH +userId);
+        //return userDynamoRepository.findBy(tenantId+ HASH +userId);
+        return userDynamoRepository.findBy(userId);
     }
 
     @Override
-    public List<Course> getCourseByStatus(String userId, String tenantId, String status) {
+    public List<Enrollment> getCourseByStatus(String userId, String tenantId, String status) {
         log.info(String.format("Entering get course by status service - User Id:%s Course Status:%s", userId, status));
 
-        LmsUser user = userDynamoRepository.findBy(tenantId+ HASH +userId);
+        //LmsUser user = userDynamoRepository.findBy(tenantId+ HASH +userId);
+        LmsUser user = userDynamoRepository.findBy(userId);
         if(user!=null){
-            return user.getCourses().get(CourseStatus.valueOf(status));
+            return user.getEnrollments().stream().filter(course -> status.equals(course.getEnrollmentStatus())).collect(Collectors.toList());
+        }
+        return null;
+    }
+
+    @Override
+    public Map<EnrollmentStatus, List<Enrollment>> getCoursesGroupByStatus(String userId, String tenantId) {
+        log.info(String.format("Entering get course by status service - User Id:%s", userId));
+
+        //LmsUser user = userDynamoRepository.findBy(tenantId+ HASH +userId);
+        LmsUser user = userDynamoRepository.findBy(userId);
+        if(user!=null){
+            return user.getEnrollments().stream().collect(Collectors.groupingBy(Enrollment::getEnrollmentStatus));
         }
         return null;
     }

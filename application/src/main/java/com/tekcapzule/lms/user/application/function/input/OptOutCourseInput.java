@@ -1,7 +1,7 @@
 package com.tekcapzule.lms.user.application.function.input;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.tekcapzule.lms.user.domain.model.Course;
+import com.tekcapzule.lms.user.domain.model.Enrollment;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 public class OptOutCourseInput {
     private String userId;
     private String tenantId;
-    private Course course;
+    private Enrollment enrollment;
 }

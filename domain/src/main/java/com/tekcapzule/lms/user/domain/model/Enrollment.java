@@ -1,11 +1,13 @@
 package com.tekcapzule.lms.user.domain.model;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -13,8 +15,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamoDBDocument
-public class Course {
+public class Enrollment {
     private String courseId;
-    private String title;
-    private String topicCode;
+    @DynamoDBAttribute(attributeName="enrollmentStatus")
+    @DynamoDBTypeConvertedEnum
+    private EnrollmentStatus enrollmentStatus;
+    @DynamoDBAttribute(attributeName = "modules")
+    private List<Module> modules;
 }
