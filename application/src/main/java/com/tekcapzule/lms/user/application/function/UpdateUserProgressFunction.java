@@ -6,9 +6,9 @@ import com.tekcapzule.core.utils.Outcome;
 import com.tekcapzule.core.utils.PayloadUtil;
 import com.tekcapzule.core.utils.Stage;
 import com.tekcapzule.lms.user.application.config.AppConfig;
-import com.tekcapzule.lms.user.application.function.input.RegisterCourseInput;
+import com.tekcapzule.lms.user.application.function.input.UpdateUserProgressInput;
 import com.tekcapzule.lms.user.application.mapper.InputOutputMapper;
-import com.tekcapzule.lms.user.domain.command.RegisterCourseCommand;
+import com.tekcapzule.lms.user.domain.command.UpdateUserProgressCommand;
 import com.tekcapzule.lms.user.domain.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -21,28 +21,28 @@ import java.util.function.Function;
 
 @Component
 @Slf4j
-public class RegisterCourseFunction implements Function<Message<RegisterCourseInput>, Message<Void>> {
+public class UpdateUserProgressFunction implements Function<Message<UpdateUserProgressInput>, Message<Void>> {
 
     private final UserService userService;
 
     private final AppConfig appConfig;
 
-    public RegisterCourseFunction(final UserService userService, final AppConfig appConfig) {
+    public UpdateUserProgressFunction(final UserService userService, final AppConfig appConfig) {
         this.userService = userService;
         this.appConfig = appConfig;
     }
 
     @Override
-    public Message<Void> apply(Message<RegisterCourseInput> registerCourseInputMessage) {
+    public Message<Void> apply(Message<UpdateUserProgressInput> updateUserProgressInputMessage) {
         Map<String, Object> responseHeaders = new HashMap<>();
         Map<String, Object> payload = new HashMap<>();
         String stage = appConfig.getStage().toUpperCase();
         try {
-            RegisterCourseInput registerCourseInput = registerCourseInputMessage.getPayload();
-            log.info(String.format("Entering register course Function - User Id:%s, Course Id:%s", registerCourseInput.getUserId(), registerCourseInput.getBookmark().getCourseId()));
-            Origin origin = HeaderUtil.buildOriginFromHeaders(registerCourseInputMessage.getHeaders());
-            RegisterCourseCommand registerCourseCommand = InputOutputMapper.buildRegisterCourseFromRegisterCourseInput.apply(registerCourseInput, origin);
-            userService.registerCourse(registerCourseCommand);
+            UpdateUserProgressInput updateUserProgressInput = updateUserProgressInputMessage.getPayload();
+            log.info(String.format("Entering update user Function - User Id:%s", updateUserProgressInput.getUserId()));
+            Origin origin = HeaderUtil.buildOriginFromHeaders(updateUserProgressInputMessage.getHeaders());
+            UpdateUserProgressCommand updateUserProgressCommand = InputOutputMapper.buildUpdateUserProgressCommandFromUpdateUserProgressInput.apply(updateUserProgressInput, origin);
+            userService.updateUserProgress(updateUserProgressCommand);
             responseHeaders = HeaderUtil.populateResponseHeaders(responseHeaders, Stage.valueOf(stage), Outcome.SUCCESS);
             payload = PayloadUtil.composePayload(Outcome.SUCCESS);
         } catch (Exception ex) {
@@ -51,5 +51,6 @@ public class RegisterCourseFunction implements Function<Message<RegisterCourseIn
             payload = PayloadUtil.composePayload(Outcome.ERROR);
         }
         return new GenericMessage(payload, responseHeaders);
+
     }
 }

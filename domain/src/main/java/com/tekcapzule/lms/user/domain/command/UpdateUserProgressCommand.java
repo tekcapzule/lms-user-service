@@ -8,7 +8,13 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
-public class DisableCommand extends Command {
+public class UpdateUserProgressCommand extends Command {
     private String userId;
     private String tenantId;
+    private String courseId;
+    private String moduleId;
+    private String chapterId;
+    private double progressPercentage;
+    private String lastAccessed;
+    private double watchedDuration;
 }

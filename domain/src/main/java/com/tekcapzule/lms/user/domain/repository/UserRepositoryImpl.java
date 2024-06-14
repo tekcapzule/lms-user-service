@@ -3,7 +3,7 @@ package com.tekcapzule.lms.user.domain.repository;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.Select;
-import com.tekcapzule.lms.user.domain.model.User;
+import com.tekcapzule.lms.user.domain.model.LmsUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -22,25 +22,24 @@ public class UserRepositoryImpl implements UserDynamoRepository {
     }
 
     @Override
-    public List<User> findAll() {
+    public List<LmsUser> findAll() {
 
-        return dynamo.scan(User.class,new DynamoDBScanExpression());
+        return dynamo.scan(LmsUser.class,new DynamoDBScanExpression());
     }
 
     @Override
-    public User findBy( String userId) {
-        return dynamo.load(User.class, userId);
+    public LmsUser findBy(String userId) {
+        return dynamo.load(LmsUser.class, userId);
     }
 
     @Override
-    public User save(User user) {
-        dynamo.save(user);
-        return user;
+    public LmsUser save(LmsUser lmsUser) {
+        dynamo.save(lmsUser);
+        return lmsUser;
     }
 
     @Override
     public int getAllUsersCount() {
-        return dynamo.count(User.class,new DynamoDBScanExpression().withSelect(Select.COUNT));
+        return dynamo.count(LmsUser.class,new DynamoDBScanExpression().withSelect(Select.COUNT));
     }
-
 }

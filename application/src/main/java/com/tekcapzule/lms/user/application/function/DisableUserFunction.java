@@ -5,11 +5,11 @@ import com.tekcapzule.core.utils.HeaderUtil;
 import com.tekcapzule.core.utils.Outcome;
 import com.tekcapzule.core.utils.PayloadUtil;
 import com.tekcapzule.core.utils.Stage;
-import com.tekcapzule.lms.user.application.config.AppConfig;
-import com.tekcapzule.lms.user.application.function.input.DeregisterCourseInput;
+import com.tekcapzule.lms.user.application.function.input.DisableInput;
 import com.tekcapzule.lms.user.application.mapper.InputOutputMapper;
-import com.tekcapzule.lms.user.domain.command.DeRegisterCourseCommand;
+import com.tekcapzule.lms.user.domain.command.DisableCommand;
 import com.tekcapzule.lms.user.domain.service.UserService;
+import com.tekcapzule.lms.user.application.config.AppConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
@@ -21,27 +21,28 @@ import java.util.function.Function;
 
 @Component
 @Slf4j
-public class DeregisterCourseFunction implements Function<Message<DeregisterCourseInput>, Message<Void>> {
+public class DisableUserFunction implements Function<Message<DisableInput>, Message<Void>> {
+
     private final UserService userService;
 
     private final AppConfig appConfig;
 
-    public DeregisterCourseFunction(final UserService userService, final AppConfig appConfig) {
+    public DisableUserFunction(final UserService userService, final AppConfig appConfig) {
         this.userService = userService;
         this.appConfig = appConfig;
     }
 
     @Override
-    public Message<Void> apply(Message<DeregisterCourseInput> removeBookmarkInputMessage) {
+    public Message<Void> apply(Message<DisableInput> disableInputMessage) {
         Map<String, Object> responseHeaders = new HashMap<>();
         Map<String, Object> payload = new HashMap<>();
         String stage = appConfig.getStage().toUpperCase();
         try {
-            DeregisterCourseInput deregisterCourseInput = removeBookmarkInputMessage.getPayload();
-            log.info(String.format("Entering remove bookmark Function - User Id:%s, Resource Id:%s", deregisterCourseInput.getUserId(), deregisterCourseInput.getCourse().getCourseId()));
-            Origin origin = HeaderUtil.buildOriginFromHeaders(removeBookmarkInputMessage.getHeaders());
-            DeRegisterCourseCommand deRegisterCourseCommand = InputOutputMapper.buildDeregisterCourseCommandFromDeregisterCourseInput.apply(deregisterCourseInput, origin);
-            userService.dereisterCourse(deRegisterCourseCommand);
+            DisableInput disableInput = disableInputMessage.getPayload();
+            log.info(String.format("Entering disable user Function - User Id:%s", disableInput.getUserId()));
+            Origin origin = HeaderUtil.buildOriginFromHeaders(disableInputMessage.getHeaders());
+            DisableCommand disableCommand = InputOutputMapper.buildDisableCommandFromDisableInput.apply(disableInput, origin);
+            userService.disable(disableCommand);
             responseHeaders = HeaderUtil.populateResponseHeaders(responseHeaders, Stage.valueOf(stage), Outcome.SUCCESS);
             payload = PayloadUtil.composePayload(Outcome.SUCCESS);
         } catch (Exception ex) {

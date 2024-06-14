@@ -13,19 +13,13 @@ import java.util.List;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
-public class UpdateInput {
+public class UpdateUserProgressInput {
     private String userId;
     private String tenantId;
-    private String firstName;
-    private String lastName;
-    private String emailId;
-    private String phoneNumber;
-    private List<String> subscribedTopics;
-    private List<Enrollment> enrollments;
-    private String activeSince;
-    private Status status;
-    private int points;
-    private String badges;
-    private Address address;
-    private List<Task> userActivity;
+    private String courseId;
+    private String moduleId;
+    private String chapterId;
+    private double progressPercentage;
+    private String lastAccessed;
+    private double watchedDuration;
 }

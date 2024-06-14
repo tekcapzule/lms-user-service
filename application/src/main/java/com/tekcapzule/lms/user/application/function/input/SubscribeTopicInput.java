@@ -1,14 +1,16 @@
 package com.tekcapzule.lms.user.application.function.input;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.tekcapzule.lms.user.domain.model.Course;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
-public class RegisterCourseInput {
+public class SubscribeTopicInput {
     private String userId;
-    private Course bookmark;
+    private String tenantId;
+    private List<String> topicCodes;
 }

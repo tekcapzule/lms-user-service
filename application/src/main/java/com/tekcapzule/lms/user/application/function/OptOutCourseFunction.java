@@ -5,11 +5,11 @@ import com.tekcapzule.core.utils.HeaderUtil;
 import com.tekcapzule.core.utils.Outcome;
 import com.tekcapzule.core.utils.PayloadUtil;
 import com.tekcapzule.core.utils.Stage;
-import com.tekcapzule.lms.user.application.function.input.DisableInput;
-import com.tekcapzule.lms.user.application.mapper.InputOutputMapper;
-import com.tekcapzule.lms.user.domain.command.DisableCommand;
-import com.tekcapzule.lms.user.domain.service.UserService;
 import com.tekcapzule.lms.user.application.config.AppConfig;
+import com.tekcapzule.lms.user.application.function.input.OptOutCourseInput;
+import com.tekcapzule.lms.user.application.mapper.InputOutputMapper;
+import com.tekcapzule.lms.user.domain.command.OptOutCourseCommand;
+import com.tekcapzule.lms.user.domain.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
@@ -21,28 +21,27 @@ import java.util.function.Function;
 
 @Component
 @Slf4j
-public class DisableFunction implements Function<Message<DisableInput>, Message<Void>> {
-
+public class OptOutCourseFunction implements Function<Message<OptOutCourseInput>, Message<Void>> {
     private final UserService userService;
 
     private final AppConfig appConfig;
 
-    public DisableFunction(final UserService userService, final AppConfig appConfig) {
+    public OptOutCourseFunction(final UserService userService, final AppConfig appConfig) {
         this.userService = userService;
         this.appConfig = appConfig;
     }
 
     @Override
-    public Message<Void> apply(Message<DisableInput> disableInputMessage) {
+    public Message<Void> apply(Message<OptOutCourseInput> removeBookmarkInputMessage) {
         Map<String, Object> responseHeaders = new HashMap<>();
         Map<String, Object> payload = new HashMap<>();
         String stage = appConfig.getStage().toUpperCase();
         try {
-            DisableInput disableInput = disableInputMessage.getPayload();
-            log.info(String.format("Entering disable user Function - User Id:%s", disableInput.getUserId()));
-            Origin origin = HeaderUtil.buildOriginFromHeaders(disableInputMessage.getHeaders());
-            DisableCommand disableCommand = InputOutputMapper.buildDisableCommandFromDisableInput.apply(disableInput, origin);
-            userService.disable(disableCommand);
+            OptOutCourseInput optOutCourseInput = removeBookmarkInputMessage.getPayload();
+            log.info(String.format("Entering remove bookmark Function - User Id:%s, Resource Id:%s", optOutCourseInput.getUserId(), optOutCourseInput.getEnrollment().getCourseId()));
+            Origin origin = HeaderUtil.buildOriginFromHeaders(removeBookmarkInputMessage.getHeaders());
+            OptOutCourseCommand optOutCourseCommand = InputOutputMapper.buildDeregisterCourseCommandFromDeregisterCourseInput.apply(optOutCourseInput, origin);
+            userService.optOutCourse(optOutCourseCommand);
             responseHeaders = HeaderUtil.populateResponseHeaders(responseHeaders, Stage.valueOf(stage), Outcome.SUCCESS);
             payload = PayloadUtil.composePayload(Outcome.SUCCESS);
         } catch (Exception ex) {

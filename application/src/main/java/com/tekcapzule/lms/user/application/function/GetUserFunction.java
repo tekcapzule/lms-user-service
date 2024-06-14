@@ -5,7 +5,7 @@ import com.tekcapzule.core.utils.Outcome;
 import com.tekcapzule.core.utils.Stage;
 import com.tekcapzule.lms.user.application.function.input.GetInput;
 import com.tekcapzule.lms.user.application.config.AppConfig;
-import com.tekcapzule.lms.user.domain.model.User;
+import com.tekcapzule.lms.user.domain.model.LmsUser;
 import com.tekcapzule.lms.user.domain.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -18,32 +18,32 @@ import java.util.function.Function;
 
 @Component
 @Slf4j
-public class GetFunction implements Function<Message<GetInput>, Message<User>> {
+public class GetUserFunction implements Function<Message<GetInput>, Message<LmsUser>> {
 
     private final UserService userService;
 
     private final AppConfig appConfig;
 
-    public GetFunction(final UserService userService, final AppConfig appConfig) {
+    public GetUserFunction(final UserService userService, final AppConfig appConfig) {
         this.userService = userService;
         this.appConfig = appConfig;
     }
 
 
     @Override
-    public Message<User> apply(Message<GetInput> getInputMessage) {
+    public Message<LmsUser> apply(Message<GetInput> getInputMessage) {
         Map<String, Object> responseHeaders = new HashMap<>();
         Map<String, Object> payload = new HashMap<>();
-        User user = new User();
+        LmsUser lmsUser = new LmsUser();
         String stage = appConfig.getStage().toUpperCase();
         try {
             GetInput getInput = getInputMessage.getPayload();
             log.info(String.format("Entering get user Function -  User Id:%s", getInput.getUserId()));
-            user = userService.get(getInput.getUserId());
+            lmsUser = userService.get(getInput.getUserId(), getInput.getTenantId());
             Map<String, Object> responseHeader = new HashMap();
-            if (user == null) {
+            if (lmsUser == null) {
                 responseHeaders = HeaderUtil.populateResponseHeaders(responseHeaders, Stage.valueOf(stage), Outcome.NOT_FOUND);
-                user = User.builder().build();
+                lmsUser = LmsUser.builder().build();
             } else {
                 responseHeaders = HeaderUtil.populateResponseHeaders(responseHeaders, Stage.valueOf(stage), Outcome.SUCCESS);
             }
@@ -51,6 +51,6 @@ public class GetFunction implements Function<Message<GetInput>, Message<User>> {
             log.error(ex.getMessage());
             responseHeaders = HeaderUtil.populateResponseHeaders(responseHeaders, Stage.valueOf(stage), Outcome.ERROR);
         }
-        return new GenericMessage(user, responseHeaders);
+        return new GenericMessage(lmsUser, responseHeaders);
     }
 }

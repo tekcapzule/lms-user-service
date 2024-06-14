@@ -5,10 +5,13 @@ import com.tekcapzule.core.domain.Command;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
-public class DisableCommand extends Command {
+public class UnSubscribeTopicCommand extends Command {
     private String userId;
     private String tenantId;
+    private List<String> topicCodes;
 }

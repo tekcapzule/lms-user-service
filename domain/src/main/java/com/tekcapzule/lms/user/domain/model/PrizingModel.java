@@ -4,11 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
-public enum Status {
-    ACTIVE("Active"),
-    INACTIVE("Inactive"),
-    EXPIRED("Expired"),
-    SUBMITTED("Submitted");
+public enum PrizingModel {
+    FREE("Free"),
+    PAID("Paid"),
+    FREEMIUM("Freemium");
 
     @Getter
     private String value;

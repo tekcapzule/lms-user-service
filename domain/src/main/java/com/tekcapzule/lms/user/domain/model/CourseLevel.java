@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
-public enum Status {
-    ACTIVE("Active"),
-    INACTIVE("Inactive"),
-    EXPIRED("Expired"),
-    SUBMITTED("Submitted");
+public enum CourseLevel {
+    BEGINNER("Beginner"),
+    INTERMEDIATE("Intermediate"),
+    ADVANCED("Proficient"),
+    MIXED("Mixed");
 
     @Getter
     private String value;

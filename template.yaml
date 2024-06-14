@@ -29,6 +29,7 @@ Globals:
         CLOUD_REGION: us-east-1
         MAIN_CLASS: com.tekcapzule.lms.user.application.UserApplication
         JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
+        COURSE_SERVICE_URL: https://lkyrfc5qhl.execute-api.us-east-1.amazonaws.com/dev/lmscourse/get
 
 Resources:
 
@@ -37,7 +38,7 @@ Resources:
   LmsUserApi:
     Type: AWS::Serverless::Api
     Properties:
-      Name: !Sub "user-${Stage}"
+      Name: !Sub "lmsuser-${Stage}"
       StageName: !Ref Stage
       Cors:
         AllowMethods: "'POST, GET'"
@@ -57,17 +58,15 @@ Resources:
       AttributeDefinitions:
         - AttributeName: userId
           AttributeType: S
-        - AttributeName: tenantId
+        - AttributeName: status
           AttributeType: S
       KeySchema:
         - AttributeName: userId
           KeyType: HASH
-        - AttributeName: tenantId
-          AttributeType: HASH
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
-      ServiceToken: dummytoken
+
       GlobalSecondaryIndexes:
         - IndexName: courseGSI
           KeySchema:
@@ -86,7 +85,7 @@ Resources:
   CreateUserFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub "${Stage}-Lms-User-CreateUser"
+      FunctionName: !Sub "${Stage}-LmsUser-CreateUser"
       SnapStart:
         ApplyOn: PublishedVersions
       Policies:
@@ -94,7 +93,8 @@ Resources:
             TableName: !Ref LmsUserTable
       Environment:
         Variables:
-          SPRING_CLOUD_FUNCTION_DEFINITION: createFunction
+          SPRING_CLOUD_FUNCTION_DEFINITION: createUserFunction
+
       Events:
         ApiEvent:
           Type: Api
@@ -107,7 +107,7 @@ Resources:
   UpdateUserFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub "${Stage}-Lms-User-UpdateUser"
+      FunctionName: !Sub "${Stage}-LmsUser-UpdateUser"
       SnapStart:
         ApplyOn: PublishedVersions
       Policies:
@@ -115,7 +115,7 @@ Resources:
             TableName: !Ref LmsUserTable
       Environment:
         Variables:
-          SPRING_CLOUD_FUNCTION_DEFINITION: updateFunction
+          SPRING_CLOUD_FUNCTION_DEFINITION: updateUserFunction
       Events:
         ApiEvent:
           Type: Api
@@ -125,10 +125,10 @@ Resources:
             RestApiId:
               Ref: LmsUserApi
 
-  DisableUserFunction:
+  UpdateUserProgressFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub "${Stage}-Lms-User-DisableUser"
+      FunctionName: !Sub "${Stage}-LmsUser-UpdateUserProgress"
       SnapStart:
         ApplyOn: PublishedVersions
       Policies:
@@ -136,7 +136,28 @@ Resources:
             TableName: !Ref LmsUserTable
       Environment:
         Variables:
-          SPRING_CLOUD_FUNCTION_DEFINITION: disableFunction
+          SPRING_CLOUD_FUNCTION_DEFINITION: updateUserProgressFunction
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: lms/user/updateProgress
+            Method: post
+            RestApiId:
+              Ref: LmsUserApi
+
+  DisableUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${Stage}-LmsUser-DisableUser"
+      SnapStart:
+        ApplyOn: PublishedVersions
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref LmsUserTable
+      Environment:
+        Variables:
+          SPRING_CLOUD_FUNCTION_DEFINITION: disableUserFunction
       Events:
         ApiEvent:
           Type: Api
@@ -148,7 +169,7 @@ Resources:
   GetUserFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub "${Stage}-Lms-User-GetUser"
+      FunctionName: !Sub "${Stage}-LmsUser-GetUser"
       SnapStart:
         ApplyOn: PublishedVersions
       Policies:
@@ -156,7 +177,7 @@ Resources:
             TableName: !Ref LmsUserTable
       Environment:
         Variables:
-          SPRING_CLOUD_FUNCTION_DEFINITION: getFunction
+          SPRING_CLOUD_FUNCTION_DEFINITION: getUserFunction
       Events:
         ApiEvent:
           Type: Api
@@ -166,10 +187,10 @@ Resources:
             RestApiId:
               Ref: LmsUserApi
 
-  FollowUserFunction:
+  SubscribeCourseFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub "${Stage}-Lms-User-FollowUser"
+      FunctionName: !Sub "${Stage}-LmsUser-SubscribeCourseUser"
       SnapStart:
         ApplyOn: PublishedVersions
       Policies:
@@ -177,20 +198,20 @@ Resources:
             TableName: !Ref LmsUserTable
       Environment:
         Variables:
-          SPRING_CLOUD_FUNCTION_DEFINITION: followFunction
+          SPRING_CLOUD_FUNCTION_DEFINITION: subscribeCourseFunction
       Events:
         ApiEvent:
           Type: Api
           Properties:
-            Path: lms/user/follow
+            Path: lms/user/subscribe
             Method: post
             RestApiId:
               Ref: LmsUserApi
 
-  UnfollowUserFunction:
+  UnsubscribeCourseFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub "${Stage}-Lms-User-UnfollowUser"
+      FunctionName: !Sub "${Stage}-LmsUser-UnsubscribeUser"
       SnapStart:
         ApplyOn: PublishedVersions
       Policies:
@@ -198,19 +219,19 @@ Resources:
             TableName: !Ref LmsUserTable
       Environment:
         Variables:
-          SPRING_CLOUD_FUNCTION_DEFINITION: unfollowFunction
+          SPRING_CLOUD_FUNCTION_DEFINITION: unsubscribeCourseFunction
       Events:
         ApiEvent:
           Type: Api
           Properties:
-            Path: lms/user/unfollow
+            Path: lms/user/unsubscribe
             Method: post
             RestApiId:
               Ref: LmsUserApi
-  AddBookmarkUserFunction:
+  OptInCourseFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub "${Stage}-Lms-User-RegisterCourseUser"
+      FunctionName: !Sub "${Stage}-LmsUser-OptInCourseUser"
       SnapStart:
         ApplyOn: PublishedVersions
       Policies:
@@ -218,38 +239,38 @@ Resources:
             TableName: !Ref LmsUserTable
       Environment:
         Variables:
-          SPRING_CLOUD_FUNCTION_DEFINITION: registerCourse
+          SPRING_CLOUD_FUNCTION_DEFINITION: optInCourseFunction
       Events:
         ApiEvent:
           Type: Api
           Properties:
-            Path: lms/user/bookmark
-            Method: post
-            RestApiId:
-              Ref: LmsUserApi
-
-  RemoveBookmarkUserFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub "${Stage}-Lms-User-DeregisterCourseUser"
-      SnapStart:
-        ApplyOn: PublishedVersions
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref LmsUserTable
-      Environment:
-        Variables:
-          SPRING_CLOUD_FUNCTION_DEFINITION: deregisterCourseFunction
-      Events:
-        ApiEvent:
-          Type: Api
-          Properties:
-            Path: lms/user/deregisterCourse
+            Path: lms/user/optin
             Method: post
             RestApiId:
               Ref: LmsUserApi
 
-  GetUsersCountFunction:
+  OptOutCourseFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${Stage}-Lms-User-optOutCourseUser"
+      SnapStart:
+        ApplyOn: PublishedVersions
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref LmsUserTable
+      Environment:
+        Variables:
+          SPRING_CLOUD_FUNCTION_DEFINITION: optOutCourseFunction
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: lms/user/optout
+            Method: post
+            RestApiId:
+              Ref: LmsUserApi
+
+  GetUserCountFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub "${Stage}-Lms-User-GetUsersCount"
@@ -260,7 +281,7 @@ Resources:
             TableName: !Ref LmsUserTable
       Environment:
         Variables:
-          SPRING_CLOUD_FUNCTION_DEFINITION: getCountFunction
+          SPRING_CLOUD_FUNCTION_DEFINITION: getUserCountFunction
       Events:
         ApiEvent:
           Type: Api
@@ -270,6 +291,34 @@ Resources:
             RestApiId:
               Ref: LmsUserApi
 
+  GetCourseByStatusFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${Stage}-Lms-User-GetCourseByStatusFunction"
+      SnapStart:
+        ApplyOn: PublishedVersions
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref LmsUserTable
+      Environment:
+        Variables:
+          SPRING_CLOUD_FUNCTION_DEFINITION: getCourseByStatusFunction
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: lms/user/getCourseByStatus
+            Method: post
+            RestApiId:
+              Ref: LmsUserApi
+  ConfigLambdaPermission:
+    Type: "AWS::Lambda::Permission"
+    DependsOn:
+      - GetUserFunction
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GetUserFunction
+      Principal: apigateway.amazonaws.com
 
   # Set Output Variable
 
