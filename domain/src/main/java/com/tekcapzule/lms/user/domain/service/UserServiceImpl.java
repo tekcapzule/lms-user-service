@@ -1,6 +1,5 @@
 package com.tekcapzule.lms.user.domain.service;
 
-import com.tekcapzule.lms.user.domain.client.CourseServiceClient;
 import com.tekcapzule.lms.user.domain.command.*;
 import com.tekcapzule.lms.user.domain.model.*;
 import com.tekcapzule.lms.user.domain.repository.UserDynamoRepository;
@@ -19,12 +18,10 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private static final String HASH = "#";
     private UserDynamoRepository userDynamoRepository;
-    private CourseServiceClient courseServiceClient;
 
     @Autowired
-    public UserServiceImpl(UserDynamoRepository userDynamoRepository, CourseServiceClient courseServiceClient) {
+    public UserServiceImpl(UserDynamoRepository userDynamoRepository) {
         this.userDynamoRepository = userDynamoRepository;
-        this.courseServiceClient = courseServiceClient;
     }
 
     @Override
@@ -115,12 +112,9 @@ public class UserServiceImpl implements UserService {
             if ( lmsUser.getEnrollments() != null) {
                 enrollments.addAll(lmsUser.getEnrollments());
             }
-            //get Course By Id
-            LMSCourse course = courseServiceClient.getCourseByCourseId(optInCourseCommand.getCourseId());
-            if(course != null){
-                enrollments.add(Enrollment.builder()
-                    .courseId(course.getCourseId()).enrollmentStatus(EnrollmentStatus.OPTEDIN).modules(course.getModules()).build());
-            }
+            enrollments.add(Enrollment.builder()
+                    .courseId(optInCourseCommand.getCourseId()).enrollmentStatus(EnrollmentStatus.OPTEDIN).build());
+
             lmsUser.setEnrollments(enrollments);
 
             lmsUser.setUpdatedOn(optInCourseCommand.getExecOn());
@@ -191,7 +185,6 @@ public class UserServiceImpl implements UserService {
     public LmsUser get(String userId, String tenantId) {
 
         log.info(String.format("Entering get user service - User Id:%s", userId));
-
         //return userDynamoRepository.findBy(tenantId+ HASH +userId);
         return userDynamoRepository.findBy(userId);
     }
@@ -226,5 +219,17 @@ public class UserServiceImpl implements UserService {
         return userDynamoRepository.getAllUsersCount();
     }
 
-
+    @Override
+    public void updateUserProgress(UpdateUserProgressCommand updateUserProgressCommand) {
+        log.info("Entering updateUserProgress for UserId %s ", updateUserProgressCommand.getUserId());
+        LmsUser lmsUser = userDynamoRepository.findBy(updateUserProgressCommand.getUserId());
+        Map<String, Progress> userProgressDetails = lmsUser.getProgressDetails();
+        String key = String.format("%s#%s#%s", updateUserProgressCommand.getCourseId(),
+                updateUserProgressCommand.getModuleId(), updateUserProgressCommand.getChapterId());
+        userProgressDetails.put(key, Progress.builder()
+                .progressPercentage(updateUserProgressCommand.getProgressPercentage())
+                .watchedDuration(updateUserProgressCommand.getWatchedDuration())
+                .lastAccessed(updateUserProgressCommand.getLastAccessed()).build());
+        userDynamoRepository.save(lmsUser);
+    }
 }

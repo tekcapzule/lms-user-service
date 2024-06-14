@@ -32,4 +32,6 @@ public interface UserService {
     List<Enrollment> getCourseByStatus(String userId, String tenantId, String status);
 
     int getAllUsersCount();
+
+    void updateUserProgress(UpdateUserProgressCommand updateUserProgressCommand);
 }

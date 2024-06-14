@@ -10,6 +10,7 @@ import com.tekcapzule.core.domain.BaseDomainEntity;
 import lombok.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -48,6 +49,10 @@ public class LmsUser extends BaseDomainEntity implements AggregateRoot {
     private String badges;
     @DynamoDBAttribute(attributeName = "address")
     private Address address;
-    @DynamoDBAttribute(attributeName = "userActivity")
-    private List<Task> userActivity;
+    /**
+     * Map of Progress Information
+     * Key : courseId#moduleId#chapterId
+     */
+    @DynamoDBAttribute(attributeName = "progress")
+    private Map<String, Progress> progressDetails;
 }

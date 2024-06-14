@@ -26,5 +26,7 @@ public class Chapter {
     @DynamoDBAttribute(attributeName = "chapterType")
     @DynamoDBTypeConvertedEnum
     private ChapterType chapterType;
-
+    @DynamoDBAttribute(attributeName = "chapterStatus")
+    @DynamoDBTypeConvertedEnum
+    private ChapterStatus chapterStatus;
 }

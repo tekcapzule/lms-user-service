@@ -29,6 +29,7 @@ Globals:
         CLOUD_REGION: us-east-1
         MAIN_CLASS: com.tekcapzule.lms.user.application.UserApplication
         JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
+        COURSE_SERVICE_URL: https://lkyrfc5qhl.execute-api.us-east-1.amazonaws.com/dev/lmscourse/get
 
 Resources:
 
@@ -93,6 +94,7 @@ Resources:
       Environment:
         Variables:
           SPRING_CLOUD_FUNCTION_DEFINITION: createUserFunction
+
       Events:
         ApiEvent:
           Type: Api
@@ -119,6 +121,27 @@ Resources:
           Type: Api
           Properties:
             Path: lms/user/update
+            Method: post
+            RestApiId:
+              Ref: LmsUserApi
+
+  UpdateUserProgressFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${Stage}-LmsUser-UpdateUserProgress"
+      SnapStart:
+        ApplyOn: PublishedVersions
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref LmsUserTable
+      Environment:
+        Variables:
+          SPRING_CLOUD_FUNCTION_DEFINITION: updateUserProgressFunction
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: lms/user/updateProgress
             Method: post
             RestApiId:
               Ref: LmsUserApi

@@ -20,6 +20,5 @@ public class Enrollment {
     @DynamoDBAttribute(attributeName="enrollmentStatus")
     @DynamoDBTypeConvertedEnum
     private EnrollmentStatus enrollmentStatus;
-    @DynamoDBAttribute(attributeName = "modules")
-    private List<Module> modules;
+    private String enrollmentDate;
 }

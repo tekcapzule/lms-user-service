@@ -40,6 +40,13 @@ public final class InputOutputMapper {
         return updateCommand;
     };
 
+    public static final BiFunction<UpdateUserProgressInput, Origin, UpdateUserProgressCommand> buildUpdateUserProgressCommandFromUpdateUserProgressInput = (updateInput, origin) -> {
+        UpdateUserProgressCommand updateUserProgressCommand = UpdateUserProgressCommand.builder().build();
+        BeanUtils.copyProperties(updateInput, updateUserProgressCommand);
+        addOrigin.apply(updateUserProgressCommand, origin);
+        return updateUserProgressCommand;
+    };
+
     public static final BiFunction<DisableInput, Origin, DisableCommand> buildDisableCommandFromDisableInput = (disableInput, origin) -> {
         DisableCommand disableCommand =  DisableCommand.builder().build();
         BeanUtils.copyProperties(disableInput, disableCommand);

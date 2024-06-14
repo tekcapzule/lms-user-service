@@ -12,8 +12,6 @@ import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-@EqualsAndHashCode(callSuper = true)
-@DynamoDBTable(tableName = "LMSCourse")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
