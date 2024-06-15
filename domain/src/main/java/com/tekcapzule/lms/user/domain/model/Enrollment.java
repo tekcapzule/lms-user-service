@@ -21,4 +21,6 @@ public class Enrollment {
     @DynamoDBTypeConvertedEnum
     private EnrollmentStatus enrollmentStatus;
     private String enrollmentDate;
+    @DynamoDBAttribute(attributeName="course")
+    private LMSCourse course;
 }

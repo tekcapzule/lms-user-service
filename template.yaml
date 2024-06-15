@@ -82,49 +82,49 @@ Resources:
 
   # Setup Lambda Functions
 
-  CreateUserFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub "${Stage}-LmsUser-CreateUser"
-      SnapStart:
-        ApplyOn: PublishedVersions
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref LmsUserTable
-      Environment:
-        Variables:
-          SPRING_CLOUD_FUNCTION_DEFINITION: createUserFunction
-
-      Events:
-        ApiEvent:
-          Type: Api
-          Properties:
-            Path: lms/user/create
-            Method: post
-            RestApiId:
-              Ref: LmsUserApi
-
-  UpdateUserFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub "${Stage}-LmsUser-UpdateUser"
-      SnapStart:
-        ApplyOn: PublishedVersions
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref LmsUserTable
-      Environment:
-        Variables:
-          SPRING_CLOUD_FUNCTION_DEFINITION: updateUserFunction
-      Events:
-        ApiEvent:
-          Type: Api
-          Properties:
-            Path: lms/user/update
-            Method: post
-            RestApiId:
-              Ref: LmsUserApi
-
+#  CreateUserFunction:
+#    Type: AWS::Serverless::Function
+#    Properties:
+#      FunctionName: !Sub "${Stage}-LmsUser-CreateUser"
+#      SnapStart:
+#        ApplyOn: PublishedVersions
+#      Policies:
+#        - DynamoDBCrudPolicy:
+#            TableName: !Ref LmsUserTable
+#      Environment:
+#        Variables:
+#          SPRING_CLOUD_FUNCTION_DEFINITION: createUserFunction
+#
+#      Events:
+#        ApiEvent:
+#          Type: Api
+#          Properties:
+#            Path: lms/user/create
+#            Method: post
+#            RestApiId:
+#              Ref: LmsUserApi
+#
+#  UpdateUserFunction:
+#    Type: AWS::Serverless::Function
+#    Properties:
+#      FunctionName: !Sub "${Stage}-LmsUser-UpdateUser"
+#      SnapStart:
+#        ApplyOn: PublishedVersions
+#      Policies:
+#        - DynamoDBCrudPolicy:
+#            TableName: !Ref LmsUserTable
+#      Environment:
+#        Variables:
+#          SPRING_CLOUD_FUNCTION_DEFINITION: updateUserFunction
+#      Events:
+#        ApiEvent:
+#          Type: Api
+#          Properties:
+#            Path: lms/user/update
+#            Method: post
+#            RestApiId:
+#              Ref: LmsUserApi
+#
   UpdateUserProgressFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -136,7 +136,7 @@ Resources:
             TableName: !Ref LmsUserTable
       Environment:
         Variables:
-          SPRING_CLOUD_FUNCTION_DEFINITION: updateUserProgressFunction
+          SPRING_CLOUD_FUNCTION_DEFINITION: updateProgressFunction
       Events:
         ApiEvent:
           Type: Api
@@ -145,27 +145,27 @@ Resources:
             Method: post
             RestApiId:
               Ref: LmsUserApi
-
-  DisableUserFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub "${Stage}-LmsUser-DisableUser"
-      SnapStart:
-        ApplyOn: PublishedVersions
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref LmsUserTable
-      Environment:
-        Variables:
-          SPRING_CLOUD_FUNCTION_DEFINITION: disableUserFunction
-      Events:
-        ApiEvent:
-          Type: Api
-          Properties:
-            Path: lms/user/disable
-            Method: post
-            RestApiId:
-              Ref: LmsUserApi
+#
+#  DisableUserFunction:
+#    Type: AWS::Serverless::Function
+#    Properties:
+#      FunctionName: !Sub "${Stage}-LmsUser-DisableUser"
+#      SnapStart:
+#        ApplyOn: PublishedVersions
+#      Policies:
+#        - DynamoDBCrudPolicy:
+#            TableName: !Ref LmsUserTable
+#      Environment:
+#        Variables:
+#          SPRING_CLOUD_FUNCTION_DEFINITION: disableUserFunction
+#      Events:
+#        ApiEvent:
+#          Type: Api
+#          Properties:
+#            Path: lms/user/disable
+#            Method: post
+#            RestApiId:
+#              Ref: LmsUserApi
   GetUserFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -187,47 +187,47 @@ Resources:
             RestApiId:
               Ref: LmsUserApi
 
-  SubscribeCourseFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub "${Stage}-LmsUser-SubscribeCourseUser"
-      SnapStart:
-        ApplyOn: PublishedVersions
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref LmsUserTable
-      Environment:
-        Variables:
-          SPRING_CLOUD_FUNCTION_DEFINITION: subscribeCourseFunction
-      Events:
-        ApiEvent:
-          Type: Api
-          Properties:
-            Path: lms/user/subscribe
-            Method: post
-            RestApiId:
-              Ref: LmsUserApi
-
-  UnsubscribeCourseFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub "${Stage}-LmsUser-UnsubscribeUser"
-      SnapStart:
-        ApplyOn: PublishedVersions
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref LmsUserTable
-      Environment:
-        Variables:
-          SPRING_CLOUD_FUNCTION_DEFINITION: unsubscribeCourseFunction
-      Events:
-        ApiEvent:
-          Type: Api
-          Properties:
-            Path: lms/user/unsubscribe
-            Method: post
-            RestApiId:
-              Ref: LmsUserApi
+#  SubscribeCourseFunction:
+#    Type: AWS::Serverless::Function
+#    Properties:
+#      FunctionName: !Sub "${Stage}-LmsUser-SubscribeCourseUser"
+#      SnapStart:
+#        ApplyOn: PublishedVersions
+#      Policies:
+#        - DynamoDBCrudPolicy:
+#            TableName: !Ref LmsUserTable
+#      Environment:
+#        Variables:
+#          SPRING_CLOUD_FUNCTION_DEFINITION: subscribeCourseFunction
+#      Events:
+#        ApiEvent:
+#          Type: Api
+#          Properties:
+#            Path: lms/user/subscribe
+#            Method: post
+#            RestApiId:
+#              Ref: LmsUserApi
+#
+#  UnsubscribeCourseFunction:
+#    Type: AWS::Serverless::Function
+#    Properties:
+#      FunctionName: !Sub "${Stage}-LmsUser-UnsubscribeUser"
+#      SnapStart:
+#        ApplyOn: PublishedVersions
+#      Policies:
+#        - DynamoDBCrudPolicy:
+#            TableName: !Ref LmsUserTable
+#      Environment:
+#        Variables:
+#          SPRING_CLOUD_FUNCTION_DEFINITION: unsubscribeCourseFunction
+#      Events:
+#        ApiEvent:
+#          Type: Api
+#          Properties:
+#            Path: lms/user/unsubscribe
+#            Method: post
+#            RestApiId:
+#              Ref: LmsUserApi
   OptInCourseFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -249,68 +249,68 @@ Resources:
             RestApiId:
               Ref: LmsUserApi
 
-  OptOutCourseFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub "${Stage}-Lms-User-optOutCourseUser"
-      SnapStart:
-        ApplyOn: PublishedVersions
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref LmsUserTable
-      Environment:
-        Variables:
-          SPRING_CLOUD_FUNCTION_DEFINITION: optOutCourseFunction
-      Events:
-        ApiEvent:
-          Type: Api
-          Properties:
-            Path: lms/user/optout
-            Method: post
-            RestApiId:
-              Ref: LmsUserApi
-
-  GetUserCountFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub "${Stage}-Lms-User-GetUsersCount"
-      SnapStart:
-        ApplyOn: PublishedVersions
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref LmsUserTable
-      Environment:
-        Variables:
-          SPRING_CLOUD_FUNCTION_DEFINITION: getUserCountFunction
-      Events:
-        ApiEvent:
-          Type: Api
-          Properties:
-            Path: lms/user/getCount
-            Method: post
-            RestApiId:
-              Ref: LmsUserApi
-
-  GetCourseByStatusFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub "${Stage}-Lms-User-GetCourseByStatusFunction"
-      SnapStart:
-        ApplyOn: PublishedVersions
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref LmsUserTable
-      Environment:
-        Variables:
-          SPRING_CLOUD_FUNCTION_DEFINITION: getCourseByStatusFunction
-      Events:
-        ApiEvent:
-          Type: Api
-          Properties:
-            Path: lms/user/getCourseByStatus
-            Method: post
-            RestApiId:
-              Ref: LmsUserApi
+#  OptOutCourseFunction:
+#    Type: AWS::Serverless::Function
+#    Properties:
+#      FunctionName: !Sub "${Stage}-Lms-User-optOutCourseUser"
+#      SnapStart:
+#        ApplyOn: PublishedVersions
+#      Policies:
+#        - DynamoDBCrudPolicy:
+#            TableName: !Ref LmsUserTable
+#      Environment:
+#        Variables:
+#          SPRING_CLOUD_FUNCTION_DEFINITION: optOutCourseFunction
+#      Events:
+#        ApiEvent:
+#          Type: Api
+#          Properties:
+#            Path: lms/user/optout
+#            Method: post
+#            RestApiId:
+#              Ref: LmsUserApi
+#
+#  GetUserCountFunction:
+#    Type: AWS::Serverless::Function
+#    Properties:
+#      FunctionName: !Sub "${Stage}-Lms-User-GetUsersCount"
+#      SnapStart:
+#        ApplyOn: PublishedVersions
+#      Policies:
+#        - DynamoDBCrudPolicy:
+#            TableName: !Ref LmsUserTable
+#      Environment:
+#        Variables:
+#          SPRING_CLOUD_FUNCTION_DEFINITION: getUserCountFunction
+#      Events:
+#        ApiEvent:
+#          Type: Api
+#          Properties:
+#            Path: lms/user/getCount
+#            Method: post
+#            RestApiId:
+#              Ref: LmsUserApi
+#
+#  GetCourseByStatusFunction:
+#    Type: AWS::Serverless::Function
+#    Properties:
+#      FunctionName: !Sub "${Stage}-Lms-User-GetCourseByStatusFunction"
+#      SnapStart:
+#        ApplyOn: PublishedVersions
+#      Policies:
+#        - DynamoDBCrudPolicy:
+#            TableName: !Ref LmsUserTable
+#      Environment:
+#        Variables:
+#          SPRING_CLOUD_FUNCTION_DEFINITION: getCourseByStatusFunction
+#      Events:
+#        ApiEvent:
+#          Type: Api
+#          Properties:
+#            Path: lms/user/getCourseByStatus
+#            Method: post
+#            RestApiId:
+#              Ref: LmsUserApi
   ConfigLambdaPermission:
     Type: "AWS::Lambda::Permission"
     DependsOn:

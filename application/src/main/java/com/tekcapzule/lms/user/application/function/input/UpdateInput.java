@@ -21,7 +21,6 @@ public class UpdateInput {
     private String emailId;
     private String phoneNumber;
     private List<String> subscribedTopics;
-    private List<Enrollment> enrollments;
     private String activeSince;
     private Status status;
     private int points;
