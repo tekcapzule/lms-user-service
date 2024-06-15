@@ -17,16 +17,6 @@ import lombok.NoArgsConstructor;
 @DynamoDBDocument
 public class Chapter {
     private int serialNumber;
-    private int duration;
-    private String name;
-    private String coverImageUrl;
-    private String startDate;
-    private String endDate;
     private int watchedDuration;
-    @DynamoDBAttribute(attributeName = "chapterType")
-    @DynamoDBTypeConvertedEnum
-    private ChapterType chapterType;
-    @DynamoDBAttribute(attributeName = "chapterStatus")
-    @DynamoDBTypeConvertedEnum
-    private ChapterStatus chapterStatus;
+    private String status;
 }

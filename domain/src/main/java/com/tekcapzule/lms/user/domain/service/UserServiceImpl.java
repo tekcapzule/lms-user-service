@@ -2,6 +2,7 @@ package com.tekcapzule.lms.user.domain.service;
 
 import com.tekcapzule.lms.user.domain.command.*;
 import com.tekcapzule.lms.user.domain.model.*;
+import com.tekcapzule.lms.user.domain.model.Module;
 import com.tekcapzule.lms.user.domain.repository.UserDynamoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
@@ -76,7 +77,6 @@ public class UserServiceImpl implements UserService {
                     .build()
             );
             lmsUser.setSubscribedTopics(updateCommand.getSubscribedTopics());
-            lmsUser.setEnrollments(updateCommand.getEnrollments());
             lmsUser.setUpdatedOn(updateCommand.getExecOn());
             lmsUser.setUpdatedBy(updateCommand.getExecBy().getUserId());
             userDynamoRepository.save(lmsUser);
@@ -112,8 +112,14 @@ public class UserServiceImpl implements UserService {
             if ( lmsUser.getEnrollments() != null) {
                 enrollments.addAll(lmsUser.getEnrollments());
             }
+            Chapter chapter = Chapter.builder().build();
+            Module module = Module.builder().chapters(Arrays.asList(chapter)).build();
             enrollments.add(Enrollment.builder()
-                    .courseId(optInCourseCommand.getCourseId()).enrollmentStatus(EnrollmentStatus.OPTEDIN).build());
+                    .courseId(optInCourseCommand.getCourseId())
+                            .course(LMSCourse.builder().courseId(optInCourseCommand.getCourseId())
+                                    .modules(Arrays.asList(module)).build())
+                    .enrollmentStatus(EnrollmentStatus.OPTEDIN)
+                    .build());
 
             lmsUser.setEnrollments(enrollments);
 
@@ -128,12 +134,12 @@ public class UserServiceImpl implements UserService {
     public void optOutCourse(OptOutCourseCommand optOutCourseCommand) {
 
         log.info(String.format("Entering optOut course service - User Id:%s, course Id:%s", optOutCourseCommand.getUserId(),
-                optOutCourseCommand.getEnrollment().getCourseId()));
+                optOutCourseCommand.getCourseId()));
 
         LmsUser lmsUser = userDynamoRepository.findBy(optOutCourseCommand.getUserId());
         if (lmsUser != null) {
             List<Enrollment> enrollments = lmsUser.getEnrollments();
-            enrollments.removeIf(course -> course.getCourseId().equals(optOutCourseCommand.getEnrollment().getCourseId()));
+            enrollments.removeIf(course -> course.getCourseId().equals(optOutCourseCommand.getCourseId()));
             lmsUser.setUpdatedOn(optOutCourseCommand.getExecOn());
             lmsUser.setUpdatedBy(optOutCourseCommand.getExecBy().getUserId());
 
@@ -221,15 +227,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUserProgress(UpdateUserProgressCommand updateUserProgressCommand) {
-        log.info("Entering updateUserProgress for UserId %s ", updateUserProgressCommand.getUserId());
+        log.info("Entering updateUserProgress for UserId %s, Course Id %s ", updateUserProgressCommand.getUserId(), updateUserProgressCommand.getCourse().getCourseId());
         LmsUser lmsUser = userDynamoRepository.findBy(updateUserProgressCommand.getUserId());
-        Map<String, Progress> userProgressDetails = lmsUser.getProgressDetails();
-        String key = String.format("%s#%s#%s", updateUserProgressCommand.getCourseId(),
-                updateUserProgressCommand.getModuleId(), updateUserProgressCommand.getChapterId());
-        userProgressDetails.put(key, Progress.builder()
-                .progressPercentage(updateUserProgressCommand.getProgressPercentage())
-                .watchedDuration(updateUserProgressCommand.getWatchedDuration())
-                .lastAccessed(updateUserProgressCommand.getLastAccessed()).build());
+        LMSCourse course = updateUserProgressCommand.getCourse();
+        lmsUser.getEnrollments().stream()
+                .forEach(enrollment -> {
+                    if(enrollment.getCourseId().equals(course.getCourseId())){
+                        enrollment.setCourse(course);
+                    }
+                });
         userDynamoRepository.save(lmsUser);
     }
 }

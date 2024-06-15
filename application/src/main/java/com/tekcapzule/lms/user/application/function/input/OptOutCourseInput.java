@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 public class OptOutCourseInput {
     private String userId;
     private String tenantId;
-    private Enrollment enrollment;
+    private String courseId;
 }

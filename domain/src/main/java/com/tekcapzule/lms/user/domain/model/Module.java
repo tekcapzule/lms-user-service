@@ -18,9 +18,8 @@ import java.util.List;
 @DynamoDBDocument
 public class Module {
     private int serialNumber;
-    private int duration;
-    private String name;
-    private String coverImageUrl;
+    private int watchedDuration;
+    private String status;
     @DynamoDBAttribute(attributeName = "chapters")
     private List<Chapter> chapters;
 }

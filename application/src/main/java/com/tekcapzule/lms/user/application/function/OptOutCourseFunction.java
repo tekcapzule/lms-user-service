@@ -38,7 +38,7 @@ public class OptOutCourseFunction implements Function<Message<OptOutCourseInput>
         String stage = appConfig.getStage().toUpperCase();
         try {
             OptOutCourseInput optOutCourseInput = removeBookmarkInputMessage.getPayload();
-            log.info(String.format("Entering remove bookmark Function - User Id:%s, Resource Id:%s", optOutCourseInput.getUserId(), optOutCourseInput.getEnrollment().getCourseId()));
+            log.info(String.format("Entering remove bookmark Function - User Id:%s, Resource Id:%s", optOutCourseInput.getUserId(), optOutCourseInput.getCourseId()));
             Origin origin = HeaderUtil.buildOriginFromHeaders(removeBookmarkInputMessage.getHeaders());
             OptOutCourseCommand optOutCourseCommand = InputOutputMapper.buildDeregisterCourseCommandFromDeregisterCourseInput.apply(optOutCourseInput, origin);
             userService.optOutCourse(optOutCourseCommand);
