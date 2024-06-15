@@ -61,7 +61,7 @@ jobs:
 #      - name: Perform CodeQL Analysis
 #        uses: github/codeql-action/analyze@v1
   publish:
-    #needs: scan
+    needs: buildAndInspect
     name: Publish
     runs-on: ubuntu-latest
     steps:
