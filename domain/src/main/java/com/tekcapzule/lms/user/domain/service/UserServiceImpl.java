@@ -108,9 +108,11 @@ public class UserServiceImpl implements UserService {
 
         LmsUser lmsUser = userDynamoRepository.findBy(optInCourseCommand.getUserId());
         if (lmsUser != null) {
-            List<Enrollment> enrollments = new ArrayList<>();
-            if ( lmsUser.getEnrollments() != null) {
-                enrollments.addAll(lmsUser.getEnrollments());
+            List<Enrollment> enrollments = lmsUser.getEnrollments();
+            log.info("lmsUser.getEnrollments() :: %s" , enrollments);
+            if ( enrollments == null) {
+                log.info("lmsUser.getEnrollments() 1  :: %s" , enrollments);
+                enrollments = new ArrayList<>();
             }
             Chapter chapter = Chapter.builder().build();
             Module module = Module.builder().chapters(Arrays.asList(chapter)).build();
@@ -120,9 +122,9 @@ public class UserServiceImpl implements UserService {
                                     .modules(Arrays.asList(module)).build())
                     .enrollmentStatus(EnrollmentStatus.OPTEDIN)
                     .build());
-
+            log.info("lmsUser.getEnrollments() 2  :: %s" , enrollments);
             lmsUser.setEnrollments(enrollments);
-
+            log.info("lmsUser.getEnrollments() 3 :: %s" , enrollments);
             lmsUser.setUpdatedOn(optInCourseCommand.getExecOn());
             lmsUser.setUpdatedBy(optInCourseCommand.getExecBy().getUserId());
 

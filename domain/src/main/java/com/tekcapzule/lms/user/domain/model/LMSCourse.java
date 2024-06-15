@@ -12,11 +12,11 @@ import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-@EqualsAndHashCode(callSuper = true)
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LMSCourse extends BaseDomainEntity implements AggregateRoot {
+@DynamoDBDocument
+public class LMSCourse {
     private String courseId;
     private int watchedDuration;
     private String status;

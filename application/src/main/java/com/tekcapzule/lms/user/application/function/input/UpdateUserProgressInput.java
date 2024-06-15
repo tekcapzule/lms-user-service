@@ -13,5 +13,5 @@ import java.util.List;
 public class UpdateUserProgressInput {
     private String userId;
     private String tenantId;
-    private LMSCourse lmsCourse;
+    private LMSCourse course;
 }
